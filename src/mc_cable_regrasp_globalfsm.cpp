@@ -97,8 +97,8 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 
     // Test data 2
     //primInfo.name = "Primitive1";
-    primInfo.name = "Primitive2";
-    primInfo.primNum = 2;
+    primInfo.name = "Primitive1";
+    primInfo.primNum = 1;
     primInfo.parNum = 1;
     primInfo.par1 = 0.3;
     primInfo.par2 = 0.0;
@@ -106,30 +106,14 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 
     // Test data 3
     //primInfo.name = "Primitive4";
-    primInfo.name = "Primitive3";
-    primInfo.primNum = 3;
+    primInfo.name = "Primitive4";
+    primInfo.primNum = 4;
     primInfo.parNum = 0;
     primInfo.par1 = -0.0;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
     // Test data 4
-    primInfo.name = "Primitive1";
-    primInfo.primNum = 1;
-    primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
-    primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo);     
-
-    // Test data 5
-    primInfo.name = "Primitive4";
-    primInfo.primNum = 4;
-    primInfo.parNum = 0;
-    primInfo.par1 = -0.0;
-    primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo); 
-
-    // Test data 6
     primInfo.name = "Primitive2";
     primInfo.primNum = 2;
     primInfo.parNum = 1;
@@ -137,15 +121,15 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
-    // Test data 7
+    // Test data 5
     primInfo.name = "Primitive3";
     primInfo.primNum = 3;
     primInfo.parNum = 0;
     primInfo.par1 = -0.0;
     primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo);     
+    ctl.quePrim.push(primInfo); 
 
-    // Test data 8
+    // Test data 6
     primInfo.name = "Primitive1";
     primInfo.primNum = 1;
     primInfo.parNum = 1;
@@ -153,13 +137,30 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
-    // Test data 9
+    // Test data 7
     primInfo.name = "Primitive4";
     primInfo.primNum = 4;
     primInfo.parNum = 0;
     primInfo.par1 = -0.0;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
+
+    // Test data 8
+    primInfo.name = "Primitive2";
+    primInfo.primNum = 2;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.3;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 9
+    primInfo.name = "Primitive3";
+    primInfo.primNum = 3;
+    primInfo.parNum = 0;
+    primInfo.par1 = -0.0;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
     LOG_SUCCESS("The size number of the queue:" << ctl.quePrim.size()); 
     //return this;
     return new QueueReadStep;
