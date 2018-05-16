@@ -211,35 +211,33 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Global: ResExeStep: __init()." << std::endl;
 
-    ctl.stepByStep = stepByStep_;
-    if (ctl.primType == 1)
+    switch (ctl.primType)
     {
-        LOG_SUCCESS("Execuate Primitive1.");
-        ctl.prim1->reset();
-        ctl.prim1->slideLen = ctl.primPar1;
+        case 1:
+            LOG_SUCCESS("Execuate Primitive1.");
+            ctl.prim1->reset();
+            ctl.prim1->slideLen = ctl.primPar1;
+            break;
+        case 2:
+            LOG_SUCCESS("Execuate Primitive2.");
+            ctl.prim2->reset();
+            ctl.prim2->slideLen = ctl.primPar1;
+            break;
+        case 3:
+            LOG_SUCCESS("Execuate Primitive3.");
+            ctl.prim3->reset();
+            break;
+        case 4:
+            LOG_SUCCESS("Execuate Primitive4.");
+            ctl.prim4->reset();
+            break;
+        case 5:
+            LOG_SUCCESS("Execuate Primitive5.");
+            ctl.prim5->reset();
+            break;
+        default:
+            break;
     }
-    else if (ctl.primType == 2)
-    {
-        LOG_SUCCESS("Execuate Primitive2.");
-        ctl.prim2->reset();
-        ctl.prim2->slideLen = ctl.primPar1;
-    }
-    else if (ctl.primType == 3)
-    {
-        LOG_SUCCESS("Execuate Primitive3.");
-        ctl.prim3->reset();
-    }
-    else if (ctl.primType == 4)
-    {
-        LOG_SUCCESS("Execuate Primitive4.");
-        ctl.prim4->reset();
-    }
-    else if (ctl.primType == 5)
-    {
-        LOG_SUCCESS("Execuate Primitive5.");
-        ctl.prim5->reset();
-    }
-    else {}
 }
 
 GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
@@ -248,76 +246,74 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Global: ResExeStep: __update()." << std::endl;
     //ctl.fsmtest = 1;
 
-    if (ctl.primType == 1)
+    switch (ctl.primType)
     {
-        ctl.prim1->prim1_fsm_run(ctl);
-        if (ctl.prim1->finish == true)
-        {
-            ctl.primType = 0;
-            ctl.prim1->finish = false;
-            if (ctl.quePrim.empty() == false)
-                return new QueueReadStep;
-            else
-                return new EndStep;
-        }
+        case 1:
+            ctl.prim1->prim1_fsm_run(ctl);
+            if (ctl.prim1->finish == true)
+            {
+                ctl.primType = 0;
+                ctl.prim1->finish = false;
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 2:
+            ctl.prim2->prim2_fsm_run(ctl);
+            if (ctl.prim2->finish == true)
+            {
+                ctl.primType = 0;
+                ctl.prim2->finish = false;
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 3:
+            ctl.prim3->prim3_fsm_run(ctl);
+            if (ctl.prim3->finish == true)
+            {
+                ctl.primType = 0;
+                ctl.prim3->finish = false;
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 4:
+            ctl.prim4->prim4_fsm_run(ctl);
+            if (ctl.prim4->finish == true)
+            {
+                ctl.primType = 0;
+                ctl.prim4->finish = false;
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 5:
+            ctl.prim5->prim5_fsm_run(ctl);
+            if (ctl.prim5->finish == true)
+            {
+                LOG_SUCCESS("primType:" << ctl.primType << "finish: " << ctl.prim5->finish);
+                ctl.primType = 0;
+                ctl.prim5->finish = false;
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        default:
+            return new EndStep;
+            break;
     }
-    else if (ctl.primType == 2)
-    {
-        ctl.prim2->prim2_fsm_run(ctl);
-        if (ctl.prim2->finish == true)
-        {
-            ctl.primType = 0;
-            ctl.prim2->finish = false;
-            if (ctl.quePrim.empty() == false)
-                return new QueueReadStep;
-            else
-                return new EndStep;
-        }
-    }
-    else if (ctl.primType == 3)
-    {
-        ctl.prim3->prim3_fsm_run(ctl);
-        if (ctl.prim3->finish == true)
-        {
-            ctl.primType = 0;
-            ctl.prim3->finish = false;
-            if (ctl.quePrim.empty() == false)
-                return new QueueReadStep;
-            else
-                return new EndStep;
-        }
-    }
-    else if (ctl.primType == 4)
-    {
-        ctl.prim4->prim4_fsm_run(ctl);
-        if (ctl.prim4->finish == true)
-        {
-            ctl.primType = 0;
-            ctl.prim4->finish = false;
-            if (ctl.quePrim.empty() == false)
-                return new QueueReadStep;
-            else
-                return new EndStep;
-        }
-    }
-    else if (ctl.primType == 5)
-    {
-        ctl.prim5->prim5_fsm_run(ctl);
-        if (ctl.prim5->finish == true)
-        {
-            LOG_SUCCESS("primType:" << ctl.primType << "finish: " << ctl.prim5->finish);
-            ctl.primType = 0;
-            ctl.prim5->finish = false;
-            if (ctl.quePrim.empty() == false)
-                return new QueueReadStep;
-            else
-                return new EndStep;
-        }
-    }
-    else
-    {
-        return new EndStep;
-    }
+
     return this;
 }
 
