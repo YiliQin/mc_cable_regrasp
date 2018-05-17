@@ -215,25 +215,27 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
         case 1:
             LOG_SUCCESS("Execuating Primitive1.");
             ctl.prim1->reset();
-            ctl.prim1->slideLen = ctl.primPar1;
+            ctl.prim1->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         case 2:
             LOG_SUCCESS("Execuating Primitive2.");
             ctl.prim2->reset();
-            ctl.prim2->slideLen = ctl.primPar1;
+            ctl.prim2->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         case 3:
             LOG_SUCCESS("Execuating Primitive3.");
             ctl.prim3->reset();
+            ctl.prim3->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         case 4:
             LOG_SUCCESS("Execuating Primitive4.");
             ctl.prim4->reset();
+            ctl.prim4->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         case 5:
             LOG_SUCCESS("Execuating Primitive5.");
             ctl.prim5->reset();
-            ctl.prim5->disBetHands = ctl.primPar1;
+            ctl.prim5->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         default:
             break;
@@ -250,10 +252,10 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
     {
         case 1:
             ctl.prim1->prim_fsm_run(ctl);
-            if (ctl.prim1->finish == true)
+            if (ctl.prim1->get_finish() == true)
             {
                 ctl.primType = 0;
-                ctl.prim1->finish = false;
+                ctl.prim1->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
@@ -262,10 +264,10 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 2:
             ctl.prim2->prim_fsm_run(ctl);
-            if (ctl.prim2->finish == true)
+            if (ctl.prim2->get_finish() == true)
             {
                 ctl.primType = 0;
-                ctl.prim2->finish = false;
+                ctl.prim2->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
@@ -274,10 +276,10 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 3:
             ctl.prim3->prim_fsm_run(ctl);
-            if (ctl.prim3->finish == true)
+            if (ctl.prim3->get_finish() == true)
             {
                 ctl.primType = 0;
-                ctl.prim3->finish = false;
+                ctl.prim3->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
@@ -286,10 +288,10 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 4:
             ctl.prim4->prim_fsm_run(ctl);
-            if (ctl.prim4->finish == true)
+            if (ctl.prim4->get_finish() == true)
             {
                 ctl.primType = 0;
-                ctl.prim4->finish = false;
+                ctl.prim4->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
@@ -298,10 +300,10 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 5:
             ctl.prim5->prim_fsm_run(ctl);
-            if (ctl.prim5->finish == true)
+            if (ctl.prim5->get_finish() == true)
             {
                 ctl.primType = 0;
-                ctl.prim5->finish = false;
+                ctl.prim5->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else

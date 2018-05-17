@@ -31,7 +31,7 @@ void Prim1InitStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive1: InitSetp: __init()."<< std::endl;
 
-    ctl.prim1->stepByStep = stepByStep_;
+    ctl.prim1->set_stepByStep(stepByStep_);
 }
 
 Prim1Step * Prim1InitStep::__update(MCCableRegraspController & ctl)
@@ -54,7 +54,7 @@ void Prim1OpenGripperStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive1: Prim1OpenGripperStep: __init()." << std::endl;
 
-    ctl.prim1->stepByStep = stepByStep_;
+    ctl.prim1->set_stepByStep(stepByStep_);
 }
 
 Prim1Step * Prim1OpenGripperStep::__update(MCCableRegraspController & ctl)
@@ -92,7 +92,7 @@ void Prim1SpreadStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive1: Prim1SpreadStep: __init()." << std::endl;
 
-    ctl.prim1->stepByStep = stepByStep_;
+    ctl.prim1->set_stepByStep(stepByStep_);
 }
 
 Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
@@ -103,7 +103,7 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
 
     // Left hand.
     Eigen::Vector3d leftDiff;
-    leftDiff << 0.0, ctl.prim1->slideLen/2, 0.0;
+    leftDiff << 0.0, ctl.prim1->get_slideLen()/2, 0.0;
     sva::PTransformd leftGripper;
     leftGripper = ctl.lh2Task->get_ef_pose();
     Eigen::Matrix3d leftRot;
@@ -114,7 +114,7 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
     
     // Right hand.
     Eigen::Vector3d rightDiff;
-    rightDiff << 0.0, -ctl.prim1->slideLen/2, 0.0;
+    rightDiff << 0.0, -(ctl.prim1->get_slideLen())/2, 0.0;
     sva::PTransformd rightGripper;
     rightGripper = ctl.rh2Task->get_ef_pose();
     Eigen::Matrix3d rightRot;
@@ -135,7 +135,7 @@ void Prim1CloseGripperStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive1: Prim1CloseGripperStep: __init()." << std::endl;
 
-    ctl.prim1->stepByStep = stepByStep_;
+    ctl.prim1->set_stepByStep(stepByStep_);
 }
 
 Prim1Step * Prim1CloseGripperStep::__update(MCCableRegraspController & ctl)
@@ -162,7 +162,7 @@ void Prim1InitPoseStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1SecondStep: __init()." << std::endl;
-    ctl.prim1->stepByStep = stepByStep_;
+    ctl.prim1->set_stepByStep(stepByStep_);
 }
 
 Prim1Step * Prim1InitPoseStep::__update(MCCableRegraspController & ctl)
@@ -189,9 +189,9 @@ Prim1Step * Prim1EndStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1EndStep: update." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim1->finish = true; 
+    //ctl.prim1->finish = true; 
     return nullptr;
 }
 

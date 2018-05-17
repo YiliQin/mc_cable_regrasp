@@ -31,7 +31,7 @@ void Prim5InitStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5InitSetp: __init()."<< std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5InitStep::__update(MCCableRegraspController & ctl)
@@ -52,7 +52,7 @@ void Prim5PreGraspStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5PreGraspStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5PreGraspStep::__update(MCCableRegraspController & ctl)
@@ -72,13 +72,13 @@ Prim5Step * Prim5PreGraspStep::__update(MCCableRegraspController & ctl)
     // rotz(-90)
     leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
     Eigen::Vector3d leftPos;
-    leftPos << 0.3, ctl.prim5->disBetHands/2, 0.9;
+    leftPos << 0.3, ctl.prim5->get_distance()/2, 0.9;
     // Right gripper.
     Eigen::Matrix3d rightRot;
     // rotz(90)
     rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
     Eigen::Vector3d rightPos;
-    rightPos << 0.3, -(ctl.prim5->disBetHands/2), 0.9;
+    rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.9;
     //
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
@@ -95,7 +95,7 @@ void Prim5OpenGripperStep::__init(MCCableRegraspController & ctl)
     // For test.
     std::cout << "Primitive5: Prim5OpenGripperStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5OpenGripperStep::__update(MCCableRegraspController & ctl)
@@ -129,7 +129,7 @@ void Prim5GraspStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5GraspStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
@@ -146,13 +146,13 @@ Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftPos;
-        leftPos << 0.3, ctl.prim5->disBetHands/2, 0.7;
+        leftPos << 0.3, ctl.prim5->get_distance()/2, 0.7;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightPos;
-        rightPos << 0.3, -(ctl.prim5->disBetHands/2), 0.7;
+        rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.7;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
@@ -171,7 +171,7 @@ void Prim5CloseGripperStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5CloseGripperStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5CloseGripperStep::__update(MCCableRegraspController & ctl)
@@ -205,7 +205,7 @@ void Prim5HangStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5HangStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5HangStep::__update(MCCableRegraspController & ctl)
@@ -229,13 +229,13 @@ Prim5Step * Prim5HangStep::__update(MCCableRegraspController & ctl)
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftPos;
-        leftPos << 0.20, ctl.prim5->disBetHands/2, 1.0;
+        leftPos << 0.20, ctl.prim5->get_distance()/2, 1.0;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightPos;
-        rightPos << 0.20, -(ctl.prim5->disBetHands/2), 1.0;
+        rightPos << 0.20, -(ctl.prim5->get_distance()/2), 1.0;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
@@ -254,7 +254,7 @@ void Prim5InitPoseStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5InitPoseStep: __init()." << std::endl;
 
-    ctl.prim5->stepByStep = stepByStep_;
+    ctl.prim5->set_stepByStep(stepByStep_);
 }
 
 Prim5Step * Prim5InitPoseStep::__update(MCCableRegraspController & ctl)
@@ -288,9 +288,8 @@ Prim5Step * Prim5EndStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive5: Prim5EndStep: update." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim5->finish = true;
     return nullptr;
 }
 

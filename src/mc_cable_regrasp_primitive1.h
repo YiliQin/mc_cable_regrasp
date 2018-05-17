@@ -11,18 +11,18 @@ struct Primitive1 : public BasicPrimitive
 {
     public:
         Primitive1();
-        Primitive1(int primitiveID, std::string primitiveDes, double len, MCCableRegraspController & ctl);
+        Primitive1(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl);
         ~Primitive1();
         // Virtual functions.
         virtual void reset() override;
+        virtual void prim_config(double par1, double par2, MCCableRegraspController & ctl) override;
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
-
+        //
+        double get_slideLen();
     public:
-        // FSM
+        // FSM pointer.
         Prim1Step * step = nullptr;  
-        bool stepByStep = false;
-        bool paused = false;
-        bool finish = false;
+        // Parameter 1 - slide length along the cable.
         double slideLen = 0.0;
 };
 

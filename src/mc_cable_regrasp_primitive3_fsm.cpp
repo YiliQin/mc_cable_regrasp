@@ -32,7 +32,7 @@ void Prim3InitStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: InitSetp: __init()."<< std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
     
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3InitStep::__update(MCCableRegraspController & ctl)
@@ -55,7 +55,7 @@ void Prim3OpenGripperStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3OpenGripperStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3OpenGripperStep::__update(MCCableRegraspController & ctl)
@@ -95,7 +95,7 @@ void Prim3LeftHandFlipStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3LeftHandFlipStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
  
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3LeftHandFlipStep::__update(MCCableRegraspController & ctl)
@@ -131,7 +131,7 @@ void Prim3ToCenterStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3ToCenterStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3ToCenterStep::__update(MCCableRegraspController & ctl)
@@ -169,7 +169,7 @@ void Prim3RegraspStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3RegraspStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3RegraspStep::__update(MCCableRegraspController & ctl)
@@ -211,7 +211,7 @@ void Prim3RightHandLockStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3RightHandLockStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
@@ -252,7 +252,7 @@ void Prim3BothFlipStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3BothFlipStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3BothFlipStep::__update(MCCableRegraspController & ctl)
@@ -315,7 +315,7 @@ void Prim3InitPoseStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive3: Prim3SecondStep: __init()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->stepByStep = stepByStep_;
+    ctl.prim3->set_stepByStep(stepByStep_);
 }
 
 Prim3Step * Prim3InitPoseStep::__update(MCCableRegraspController & ctl)
@@ -348,9 +348,9 @@ Prim3Step * Prim3EndStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3EndStep: update." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    ctl.prim3->finish = true;
+    //ctl.prim3->finish = true;
     return nullptr;
 }
 }

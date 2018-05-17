@@ -28,11 +28,19 @@ Primitive3::~Primitive3()
 
 void Primitive3::reset()
 {
+    // Reset FSM signal.
     stepByStep = false;
     paused = false;
     finish = false;
+}
 
-    // Create Primitive3.
+void Primitive3::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+{
+    // Set parameter.
+    par1 = par1;
+    par2 = par2;
+    ctl.neglectFctInp = ctl.neglectFctInp;
+
     step = new Prim3InitStep();
 }
 
@@ -59,6 +67,7 @@ void Primitive3::prim_fsm_run(MCCableRegraspController & ctl)
                 //paused = stepByStep;
                 if (step == nullptr)
                 {
+                    finish = 1;
                     LOG_SUCCESS("Completed: Primitive3 FSM");
                 }
             }

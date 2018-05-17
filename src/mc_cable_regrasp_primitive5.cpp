@@ -9,11 +9,11 @@ Primitive5::Primitive5()
 {
 }
 
-Primitive5::Primitive5(int primitiveID, std::string primitiveDes,double disBetHands, MCCableRegraspController & ctl)
-    : BasicPrimitive(primitiveID, primitiveDes), disBetHands(disBetHands)
+Primitive5::Primitive5(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
+    : BasicPrimitive(primitiveID, primitiveDes)
 {
     // For test.
-    std::cout << "Primitive5 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
+    //std::cout << "Primitive5 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
     // Further consider to put in which function.
     ctl.neglectFctInp = ctl.neglectFctInp;
 
@@ -23,14 +23,24 @@ Primitive5::Primitive5(int primitiveID, std::string primitiveDes,double disBetHa
 Primitive5::~Primitive5()
 {
     // For test.
-    std::cout << "Primitive5 destroy!" << std::endl;
+    //std::cout << "Primitive5 destroy!" << std::endl;
 }
 
 void Primitive5::reset()
 {
+    // Reset FSM signal.
     stepByStep = false;
     paused = false;
     finish = false;
+}
+
+void Primitive5::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+{
+    // Set parameter1.
+    disBetHands = par1;
+    par2 = par2;
+    ctl.neglectFctInp = ctl.neglectFctInp;
+
     step = new Prim5InitStep();
 }
 
@@ -59,12 +69,18 @@ void Primitive5::prim_fsm_run(MCCableRegraspController & ctl)
                 //paused = stepByStep;
                 if (step == nullptr)
                 {
+                    finish = true;
                     LOG_SUCCESS("Completed: Primitive5 FSM");
                 }
             }
         } 
     }
 
+}
+
+double Primitive5::get_distance()
+{
+    return disBetHands;
 }
 
 }

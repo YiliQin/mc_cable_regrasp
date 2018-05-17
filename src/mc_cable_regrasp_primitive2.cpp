@@ -9,8 +9,8 @@ Primitive2::Primitive2()
 {
 }
 
-Primitive2::Primitive2(int primitiveID, std::string primitiveDes, double slideLen, MCCableRegraspController & ctl)
-    : BasicPrimitive(primitiveID, primitiveDes), slideLen(slideLen)
+Primitive2::Primitive2(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
+    : BasicPrimitive(primitiveID, primitiveDes)
 {
     // For test.
     //std::cout << "Primitive2 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
@@ -28,11 +28,10 @@ Primitive2::~Primitive2()
 
 void Primitive2::reset()
 {
+    // Reset FSM signal.
     stepByStep = false;
     paused = false;
     finish = false;
-    // Create Primitive2.
-    step = new Prim2InitStep();
 }
 
 void Primitive2::prim_fsm_run(MCCableRegraspController & ctl)
@@ -59,11 +58,27 @@ void Primitive2::prim_fsm_run(MCCableRegraspController & ctl)
                 //paused = stepByStep;
                 if (step == nullptr)
                 {
+                    finish = true;
                     LOG_SUCCESS("Completed: Primitive2 FSM");
                 }
             }
         } 
     }
+}
+
+void Primitive2::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+{
+    // Set parameter1.
+    slideLen = par1;
+    par2 = par2;
+    ctl.neglectFctInp = ctl.neglectFctInp;
+
+    step = new Prim2InitStep();
+}
+
+double Primitive2::get_slideLen()
+{
+    return slideLen;
 }
 
 }

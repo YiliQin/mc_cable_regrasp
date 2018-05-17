@@ -15,15 +15,12 @@ struct Primitive3 : public BasicPrimitive
         ~Primitive3();
         // Vritual functions.
         virtual void reset() override;
+        virtual void prim_config(double par1, double par2, MCCableRegraspController & ctl) override;
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
 
     public:
-        // FSM
+        // FSM pointer.
         Prim3Step * step = nullptr;  
-        bool stepByStep = false;
-        bool paused = false;
-        bool finish = false;
-
 };
 
 }

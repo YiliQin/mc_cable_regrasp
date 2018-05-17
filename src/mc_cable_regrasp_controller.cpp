@@ -126,11 +126,11 @@ void MCCableRegraspController::reset(const ControllerResetData & reset_data)
     // Start the global FSM.
     step = new InitStep();
     // Create primitive object.
-    prim1 = new Primitive1(1, "Primivive 1", 0.0, *this); 
-    prim2 = new Primitive2(2, "Primivive 2", 0.0, *this); 
+    prim1 = new Primitive1(1, "Primivive 1", *this); 
+    prim2 = new Primitive2(2, "Primivive 2", *this); 
     prim3 = new Primitive3(3, "Primivive 3", *this); 
     prim4 = new Primitive4(4, "Primivive 4", *this); 
-    prim5 = new Primitive5(5, "Primivive 5", 0.6, *this); 
+    prim5 = new Primitive5(5, "Primivive 5", *this); 
 }
 
 bool MCCableRegraspController::run()
