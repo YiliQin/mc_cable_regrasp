@@ -36,7 +36,7 @@ void Primitive3::reset()
     step = new Prim3InitStep();
 }
 
-void Primitive3::prim3_fsm_run(MCCableRegraspController & ctl)
+void Primitive3::prim_fsm_run(MCCableRegraspController & ctl)
 {    
     if (!paused)
     {

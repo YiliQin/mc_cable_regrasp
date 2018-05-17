@@ -13,9 +13,9 @@ struct Primitive5 : public BasicPrimitive
         Primitive5();
         Primitive5(int primitiveID, std::string primitiveDes, double disBetHands, MCCableRegraspController & ctl);
         ~Primitive5();
-
-        void reset();
-        void prim5_fsm_run(MCCableRegraspController & ctl);
+        // Virtual functions.
+        virtual void reset() override;
+        virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
 
     public:
         // FSM

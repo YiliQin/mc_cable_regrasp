@@ -34,7 +34,7 @@ void Primitive5::reset()
     step = new Prim5InitStep();
 }
 
-void Primitive5::prim5_fsm_run(MCCableRegraspController & ctl)
+void Primitive5::prim_fsm_run(MCCableRegraspController & ctl)
 {
     // For test.
     if (!paused)

@@ -249,7 +249,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
     switch (ctl.primType)
     {
         case 1:
-            ctl.prim1->prim1_fsm_run(ctl);
+            ctl.prim1->prim_fsm_run(ctl);
             if (ctl.prim1->finish == true)
             {
                 ctl.primType = 0;
@@ -261,7 +261,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             }
             break;
         case 2:
-            ctl.prim2->prim2_fsm_run(ctl);
+            ctl.prim2->prim_fsm_run(ctl);
             if (ctl.prim2->finish == true)
             {
                 ctl.primType = 0;
@@ -273,7 +273,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             }
             break;
         case 3:
-            ctl.prim3->prim3_fsm_run(ctl);
+            ctl.prim3->prim_fsm_run(ctl);
             if (ctl.prim3->finish == true)
             {
                 ctl.primType = 0;
@@ -285,7 +285,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             }
             break;
         case 4:
-            ctl.prim4->prim4_fsm_run(ctl);
+            ctl.prim4->prim_fsm_run(ctl);
             if (ctl.prim4->finish == true)
             {
                 ctl.primType = 0;
@@ -297,7 +297,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             }
             break;
         case 5:
-            ctl.prim5->prim5_fsm_run(ctl);
+            ctl.prim5->prim_fsm_run(ctl);
             if (ctl.prim5->finish == true)
             {
                 ctl.primType = 0;

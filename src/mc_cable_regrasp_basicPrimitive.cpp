@@ -14,6 +14,17 @@ BasicPrimitive::~BasicPrimitive()
 {
 }
 
+void BasicPrimitive::reset()
+{
+    primitiveID = 0;
+    primitiveDes = "Please Input Description.";
+}
+
+void BasicPrimitive::prim_fsm_run(MCCableRegraspController & ctl)
+{
+    ctl.neglectFctInp = ctl.neglectFctInp;
+}
+
 int BasicPrimitive::getID()
 {
     return primitiveID;
@@ -22,12 +33,6 @@ int BasicPrimitive::getID()
 std::string BasicPrimitive::getDes()
 {
     return primitiveDes;
-}
-
-void BasicPrimitive::printDes()
-{
-    std::cout << primitiveID << std::endl;
-    std::cout << primitiveDes << std::endl;
 }
 
 }

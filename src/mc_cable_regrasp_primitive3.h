@@ -13,9 +13,9 @@ struct Primitive3 : public BasicPrimitive
         Primitive3();
         Primitive3(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl);
         ~Primitive3();
-
-        void reset();
-        void prim3_fsm_run(MCCableRegraspController & ctl);
+        // Vritual functions.
+        virtual void reset() override;
+        virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
 
     public:
         // FSM
