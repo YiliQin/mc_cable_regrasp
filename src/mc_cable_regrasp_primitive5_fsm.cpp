@@ -72,13 +72,13 @@ Prim5Step * Prim5PreGraspStep::__update(MCCableRegraspController & ctl)
     // rotz(-90)
     leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
     Eigen::Vector3d leftPos;
-    leftPos << 0.3, 0.3, 0.9;
+    leftPos << 0.3, ctl.prim5->disBetHands/2, 0.9;
     // Right gripper.
     Eigen::Matrix3d rightRot;
     // rotz(90)
     rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
     Eigen::Vector3d rightPos;
-    rightPos << 0.3, -0.3, 0.9;
+    rightPos << 0.3, -(ctl.prim5->disBetHands/2), 0.9;
     //
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
@@ -146,13 +146,13 @@ Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftPos;
-        leftPos << 0.3, 0.3, 0.7;
+        leftPos << 0.3, ctl.prim5->disBetHands/2, 0.7;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightPos;
-        rightPos << 0.3, -0.3, 0.7;
+        rightPos << 0.3, -(ctl.prim5->disBetHands/2), 0.7;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
@@ -229,13 +229,13 @@ Prim5Step * Prim5HangStep::__update(MCCableRegraspController & ctl)
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftPos;
-        leftPos << 0.20, 0.3, 1.0;
+        leftPos << 0.20, ctl.prim5->disBetHands/2, 1.0;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightPos;
-        rightPos << 0.20, -0.3, 1.0;
+        rightPos << 0.20, -(ctl.prim5->disBetHands/2), 1.0;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));

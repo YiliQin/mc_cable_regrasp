@@ -9,15 +9,14 @@ Primitive5::Primitive5()
 {
 }
 
-Primitive5::Primitive5(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
-    : BasicPrimitive(primitiveID, primitiveDes)
+Primitive5::Primitive5(int primitiveID, std::string primitiveDes,double disBetHands, MCCableRegraspController & ctl)
+    : BasicPrimitive(primitiveID, primitiveDes), disBetHands(disBetHands)
 {
     // For test.
     std::cout << "Primitive5 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
     // Further consider to put in which function.
     ctl.neglectFctInp = ctl.neglectFctInp;
-    // Create primitive5 FSM.
-    //step = new Prim5InitStep();
+
     reset();
 }
 

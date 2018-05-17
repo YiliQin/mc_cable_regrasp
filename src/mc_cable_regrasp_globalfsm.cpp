@@ -91,8 +91,8 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     // Test data 1
     primInfo.name = "Primitive5";
     primInfo.primNum = 5;
-    primInfo.parNum = 0;
-    primInfo.par1 = 0.0;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.6;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
@@ -233,6 +233,7 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
         case 5:
             LOG_SUCCESS("Execuating Primitive5.");
             ctl.prim5->reset();
+            ctl.prim5->disBetHands = ctl.primPar1;
             break;
         default:
             break;
@@ -299,7 +300,6 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             ctl.prim5->prim5_fsm_run(ctl);
             if (ctl.prim5->finish == true)
             {
-                LOG_SUCCESS("primType:" << ctl.primType << "finish: " << ctl.prim5->finish);
                 ctl.primType = 0;
                 ctl.prim5->finish = false;
                 if (ctl.quePrim.empty() == false)

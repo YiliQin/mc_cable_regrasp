@@ -11,7 +11,7 @@ struct Primitive5 : public BasicPrimitive
 {
     public:
         Primitive5();
-        Primitive5(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl);
+        Primitive5(int primitiveID, std::string primitiveDes, double disBetHands, MCCableRegraspController & ctl);
         ~Primitive5();
 
         void reset();
@@ -24,6 +24,7 @@ struct Primitive5 : public BasicPrimitive
         bool stepByStep = false;
         bool paused = false;
         bool finish = false;
+        double disBetHands = 0.6;
 };
 
 }
