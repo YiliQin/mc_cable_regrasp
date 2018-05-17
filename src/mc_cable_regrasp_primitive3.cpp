@@ -14,7 +14,7 @@ Primitive3::Primitive3(int primitiveID, std::string primitiveDes, MCCableRegrasp
 {
     // For test.
     //std::cout << "Primitive3 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Reset.
     reset();

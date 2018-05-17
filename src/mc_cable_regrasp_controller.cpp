@@ -224,52 +224,6 @@ void MCCableRegraspController::global_fsm_run()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-//  Initial Posture
-/////////////////////////////////////////////////////////////////////////////
-
-void MCCableRegraspController::move_hands_to_obj(Eigen::Matrix3d objRot, Eigen::Vector3d objPos, Eigen::Matrix3d lfLHandRot, Eigen::Vector3d lfLHandPos, Eigen::Matrix3d lfRHandRot, Eigen::Vector3d lfRHandPos)
-{
-    // cal left hand grasp position
-    Eigen::Vector3d leftHandPos;
-    leftHandPos = objPos + objRot * lfLHandPos;
-    // cal right hand grasp position
-    Eigen::Vector3d rightHandPos;
-    rightHandPos = objPos + objRot * lfRHandPos;
-
-    // cal left hand rotation
-    Eigen::Matrix3d leftHandOri;
-    leftHandOri = objRot * lfLHandRot;
-    // cal right hand rotation
-    Eigen::Matrix3d rightHandOri;
-    rightHandOri = objRot * lfRHandRot;
-    
-    // move two hands
-    lh2Task->set_ef_pose(sva::PTransformd(leftHandOri.inverse(), leftHandPos));
-    rh2Task->set_ef_pose(sva::PTransformd(rightHandOri.inverse(), rightHandPos));
-}
-
-void MCCableRegraspController::move_rigid_obj(Eigen::Matrix3d objRot, Eigen::Vector3d objPos, double intv)
-{
-    // hands rotation to the local frame of bar
-    Eigen::Matrix3d lHandRotToBar, rHandRotToBar;
-    lHandRotToBar << 0, 1, 0, -1, 0, 0, 0, 0, 1;
-    rHandRotToBar << 0, -1, 0, 1, 0, 0, 0, 0, 1;
-    // hands rotation to the world frame 
-    Eigen::Matrix3d lHandRot, rHandRot;
-    lHandRot = objRot * lHandRotToBar;
-    rHandRot = objRot * rHandRotToBar;
-    // hands position to the world frame
-    Eigen::Vector3d lHandPos, rHandPos, lHandDiff, rHandDiff;
-    lHandDiff << 0, intv, 0;
-    rHandDiff << 0, -intv, 0; 
-    lHandPos = objPos + objRot * lHandDiff;
-    rHandPos = objPos + objRot * rHandDiff;
-    // move hands
-    lh2Task->set_ef_pose(sva::PTransformd(lHandRot.inverse(), lHandPos));
-    rh2Task->set_ef_pose(sva::PTransformd(rHandRot.inverse(), rHandPos));
-}
-
-/////////////////////////////////////////////////////////////////////////////
 //  System Interface
 /////////////////////////////////////////////////////////////////////////////
 

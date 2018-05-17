@@ -42,7 +42,17 @@ CREATE_STEP(Prim5PreGraspStep, "Primitive5 Prepare Grasp Step",
                 int cnt = 0;
                 )
 
+CREATE_STEP(Prim5OpenGripperStep, "Primitive5 Open Gripper Step",
+                bool stepByStep_ = true;
+                int cnt = 0;
+                )
+
 CREATE_STEP(Prim5GraspStep, "Primitive5 Grasp Step",
+                bool stepByStep_ = true;
+                int cnt = 0;
+                )
+
+CREATE_STEP(Prim5CloseGripperStep, "Primitive5 Close Gripper Step",
                 bool stepByStep_ = true;
                 int cnt = 0;
                 )

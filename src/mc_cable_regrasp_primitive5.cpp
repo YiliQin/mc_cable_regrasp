@@ -15,7 +15,7 @@ Primitive5::Primitive5(int primitiveID, std::string primitiveDes, MCCableRegrasp
     // For test.
     std::cout << "Primitive5 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
     // Further consider to put in which function.
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
     // Create primitive5 FSM.
     //step = new Prim5InitStep();
     reset();

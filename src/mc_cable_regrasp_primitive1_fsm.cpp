@@ -7,7 +7,7 @@ namespace mc_control
 Prim1Step::Prim1Step(const std::string & name)
     : name(name)
 {
-    std::cout << "Prim1Step Constructed." << std::endl;
+    //std::cout << "Prim1Step Constructed." << std::endl;
 }
 
 Prim1Step * Prim1Step::update(MCCableRegraspController & ctl)
@@ -39,7 +39,7 @@ Prim1Step * Prim1InitStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive1: Prim1InitStep: __update()." << std::endl;
     //return this;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
     //return this;
     return new Prim1OpenGripperStep;
@@ -72,7 +72,7 @@ Prim1Step * Prim1OpenGripperStep::__update(MCCableRegraspController & ctl)
     // Wait.
     static int wait = 0;
     wait++;
-    if (wait == 500)
+    if (wait == 200)
     {
         wait = 0;
         return new Prim1SpreadStep;
@@ -99,7 +99,7 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1SpreadStep: __update()." << std::endl;
-    //ctl.fsmtest = 1;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Left hand.
     Eigen::Vector3d leftDiff;
@@ -142,7 +142,7 @@ Prim1Step * Prim1CloseGripperStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1CloseGripperStep: __update()." << std::endl;
-    //ctl.fsmtest = 1;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
     double diff;    
@@ -169,7 +169,7 @@ Prim1Step * Prim1InitPoseStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1SecondStep: __update()." << std::endl;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return new Prim1EndStep;
 }
@@ -182,14 +182,14 @@ void Prim1EndStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1EndStep: init." << std::endl;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
 Prim1Step * Prim1EndStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim1EndStep: update." << std::endl;
-    //ctl.fsmtest = 1;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim1->finish = true; 
     return nullptr;

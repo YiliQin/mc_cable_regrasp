@@ -39,11 +39,9 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
 {
     public:
         MCCableRegraspController(std::shared_ptr<mc_rbdyn::RobotModule> robot, double dt);
-
+        
+        // User function.
         void global_fsm_run();
-        void move_hands_to_obj(Eigen::Matrix3d objRot, Eigen::Vector3d objPos, Eigen::Matrix3d lfLHandRot, Eigen::Vector3d lfLHandPos, Eigen::Matrix3d lfRHandRot, Eigen::Vector3d lfRHandPos);
-        void move_rigid_obj(Eigen::Matrix3d objRot, Eigen::Vector3d objPos, double intv);
-
         // Virtual function.
         virtual bool run() override;
         virtual void reset(const ControllerResetData & reset_data) override;
@@ -51,9 +49,6 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         virtual bool read_write_msg(std::string & msg, std::string & out) override;
 
     public:
-         // For test.
-        int fsmtest = 0;
-        
         // Primitive.
         GlobalTestStep * step = nullptr;
         Primitive1 * prim1 = nullptr;
@@ -64,6 +59,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         std::queue<PrimInfo> quePrim;
         
         // FLAG - For global FSM.
+        bool neglectFctInp = false;
         bool stepByStep = false;
         bool paused = false;
         

@@ -14,7 +14,7 @@ Primitive2::Primitive2(int primitiveID, std::string primitiveDes, double slideLe
 {
     // For test.
     //std::cout << "Primitive2 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Reset.
     reset();

@@ -44,7 +44,7 @@ GlobalTestStep * InitStep::__update(MCCableRegraspController & ctl)
     
     //return this;
 
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
     return new InitialPoseStep;
 }
 
@@ -64,7 +64,7 @@ GlobalTestStep * InitialPoseStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Global: InitialPoseStep: __update()." << std::endl;
     //return this;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
     
     return new PlannerRunStep;
 }
@@ -84,9 +84,10 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: PlannerRunStep: __update()." << std::endl;
-    //ctl.fsmtest = 1;
-    //
+    //ctl.neglectFctInp = ctl.neglectFctInp;
+
     PrimInfo primInfo;
+
     // Test data 1
     primInfo.name = "Primitive5";
     primInfo.primNum = 5;
@@ -96,7 +97,6 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     ctl.quePrim.push(primInfo);     
 
     // Test data 2
-    //primInfo.name = "Primitive1";
     primInfo.name = "Primitive1";
     primInfo.primNum = 1;
     primInfo.parNum = 1;
@@ -105,7 +105,6 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     ctl.quePrim.push(primInfo);     
 
     // Test data 3
-    //primInfo.name = "Primitive4";
     primInfo.name = "Primitive4";
     primInfo.primNum = 4;
     primInfo.parNum = 0;
@@ -182,18 +181,18 @@ GlobalTestStep * QueueReadStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: PlannerRunStep: __update()." << std::endl;
-    //ctl.fsmtest = 1;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     if (ctl.quePrim.empty() == false)
     {
-        LOG_SUCCESS("prim.name:" << ctl.quePrim.front().name << ctl.quePrim.front().primNum)
+        LOG_SUCCESS("Read out primitive:" << ctl.quePrim.front().name << "," << ctl.quePrim.front().primNum)
         ctl.primName = ctl.quePrim.front().name;
         ctl.primType = ctl.quePrim.front().primNum;
         ctl.primParNum = ctl.quePrim.front().parNum;
         ctl.primPar1 = ctl.quePrim.front().par1;
         ctl.primPar2 = ctl.quePrim.front().par2;
         ctl.quePrim.pop();
-        LOG_SUCCESS("pop()" << ctl.quePrim.empty());
+        LOG_SUCCESS("Run pop(), left primitive:" << ctl.quePrim.size());
         return new ResExeStep;
     }
     else 
@@ -214,25 +213,25 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
     switch (ctl.primType)
     {
         case 1:
-            LOG_SUCCESS("Execuate Primitive1.");
+            LOG_SUCCESS("Execuating Primitive1.");
             ctl.prim1->reset();
             ctl.prim1->slideLen = ctl.primPar1;
             break;
         case 2:
-            LOG_SUCCESS("Execuate Primitive2.");
+            LOG_SUCCESS("Execuating Primitive2.");
             ctl.prim2->reset();
             ctl.prim2->slideLen = ctl.primPar1;
             break;
         case 3:
-            LOG_SUCCESS("Execuate Primitive3.");
+            LOG_SUCCESS("Execuating Primitive3.");
             ctl.prim3->reset();
             break;
         case 4:
-            LOG_SUCCESS("Execuate Primitive4.");
+            LOG_SUCCESS("Execuating Primitive4.");
             ctl.prim4->reset();
             break;
         case 5:
-            LOG_SUCCESS("Execuate Primitive5.");
+            LOG_SUCCESS("Execuating Primitive5.");
             ctl.prim5->reset();
             break;
         default:
@@ -244,7 +243,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: ResExeStep: __update()." << std::endl;
-    //ctl.fsmtest = 1;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     switch (ctl.primType)
     {
@@ -325,14 +324,14 @@ void EndStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: EndStep: __init()." << std::endl;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
 GlobalTestStep * EndStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: EndStep: update" << std::endl;
-    ctl.fsmtest = 1;
+    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return nullptr;
 }
