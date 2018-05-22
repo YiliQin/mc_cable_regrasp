@@ -8,12 +8,12 @@
 namespace mc_control
 {
 
-struct Prim1Traj1
+struct LinearTrajectory
 {
     public:
-        Prim1Traj1();
-        Prim1Traj1(const Eigen::Vector3d spos, const Eigen::Vector3d epos, const Eigen::Matrix3d srot, const Eigen::Matrix3d erot, std::size_t nr_points);
-        ~Prim1Traj1();
+        LinearTrajectory();
+        LinearTrajectory(const Eigen::Vector3d spos, const Eigen::Vector3d epos, const Eigen::Matrix3d srot, const Eigen::Matrix3d erot, std::size_t nr_points);
+        ~LinearTrajectory();
         // 
         void gen_traj(); 
         std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Matrix3d> pop();

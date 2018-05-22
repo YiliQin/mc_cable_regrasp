@@ -3,7 +3,6 @@
 
 #include "mc_cable_regrasp_basicPrimitive.h"
 #include "mc_cable_regrasp_primitive1_fsm.h"
-#include "mc_cable_regrasp_primitive1_traj1.h"
 
 namespace mc_control
 {

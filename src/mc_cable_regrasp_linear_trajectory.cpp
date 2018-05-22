@@ -1,23 +1,23 @@
-#include "mc_cable_regrasp_primitive1_traj1.h"
+#include "mc_cable_regrasp_linear_trajectory.h"
 
 namespace mc_control
 {
 
-Prim1Traj1::Prim1Traj1()
+LinearTrajectory::LinearTrajectory()
 {
 }
 
-Prim1Traj1::Prim1Traj1(const Eigen::Vector3d spos, const Eigen::Vector3d epos, const Eigen::Matrix3d srot, const Eigen::Matrix3d erot, std::size_t nr_points)
+LinearTrajectory::LinearTrajectory(const Eigen::Vector3d spos, const Eigen::Vector3d epos, const Eigen::Matrix3d srot, const Eigen::Matrix3d erot, std::size_t nr_points)
     : startPos(spos), endPos(epos), startRot(srot), endRot(erot), nr_points(nr_points)
 {
     gen_traj();
 }
 
-Prim1Traj1::~Prim1Traj1()
+LinearTrajectory::~LinearTrajectory()
 {
 }
 
-void Prim1Traj1::gen_traj()
+void LinearTrajectory::gen_traj()
 {
     double diffy;
     diffy = (endPos[1] - startPos[1])/(double)nr_points;
@@ -49,7 +49,7 @@ void Prim1Traj1::gen_traj()
     //std::cout << "The size of trajectory queue: " << queue.size() << std::endl;
 }
 
-std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Matrix3d> Prim1Traj1::pop()
+std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Matrix3d> LinearTrajectory::pop()
 {
     std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Matrix3d> quad;
     if (queue.empty())

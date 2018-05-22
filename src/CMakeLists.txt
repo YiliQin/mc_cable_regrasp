@@ -12,7 +12,7 @@ set(controller_SRC
     mc_cable_regrasp_primitive4_fsm.cpp
     mc_cable_regrasp_primitive5.cpp
     mc_cable_regrasp_primitive5_fsm.cpp
-    mc_cable_regrasp_primitive1_traj1.cpp
+    mc_cable_regrasp_linear_trajectory.cpp
 )
 
 set(controller_HDR
@@ -29,7 +29,7 @@ set(controller_HDR
     mc_cable_regrasp_primitive4_fsm.h
     mc_cable_regrasp_primitive5.h
     mc_cable_regrasp_primitive5_fsm.h
-    mc_cable_regrasp_primitive1_traj1.h
+    mc_cable_regrasp_linear_trajectory.h
 )
 
 add_library(${PROJECT_NAME} SHARED ${controller_SRC} ${controller_HDR})

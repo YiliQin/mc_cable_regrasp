@@ -106,7 +106,7 @@ void Prim1SpreadStep::__init(MCCableRegraspController & ctl)
     endPosLeft = startPosLeft + leftDiff;
     Eigen::Matrix3d endRotLeft;
     endRotLeft = startRotLeft;
-    leftHandLinearTraj = new Prim1Traj1(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
+    leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
     // right gripper
     sva::PTransformd rightGripper;
     rightGripper = ctl.rh2Task->get_ef_pose();
@@ -120,7 +120,7 @@ void Prim1SpreadStep::__init(MCCableRegraspController & ctl)
     endPosRight = startPosRight + rightDiff;
     Eigen::Matrix3d endRotRight;
     endRotRight = startRotRight;
-    rightHandLinearTraj = new Prim1Traj1(startPosRight, endPosRight, startRotRight, endRotRight, nr_points_traj);
+    rightHandLinearTraj = new LinearTrajectory(startPosRight, endPosRight, startRotRight, endRotRight, nr_points_traj);
 }
 
 Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
