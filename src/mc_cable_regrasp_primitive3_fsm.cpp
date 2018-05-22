@@ -228,7 +228,7 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
         gripper->setTargetQ({-0.5});
         // Close/lock right gripper.        
         gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({0.1});
+        gripper->setTargetQ({0.0});
 
         // Wait.
         static int wait = 0;

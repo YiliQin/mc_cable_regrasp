@@ -34,7 +34,7 @@ void LinearTrajectory::gen_traj()
         pos[2] = pos[2];
         // velocity
         vel[0] = 0.0;
-        vel[1] = 0.1;
+        vel[1] = 0.05;
         vel[2] = 0.0;
         // acceleration
         acc[0] = 0.0;

@@ -49,8 +49,10 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
         dt),
         tf_caster(0), seq(0), barCollisionConstraint(robots(), 0, 1, solver().dt())
 {
-    robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
-    robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
+    // modify the model position and orientation error in Choreonoid
+    //robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
+    //robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
+
     qpsolver->addConstraintSet(contactConstraint);
     qpsolver->addConstraintSet(dynamicsConstraint);
     if(robot().name() == "hrp2_drc")

@@ -225,7 +225,7 @@ Prim4Step * Prim4LeftHandLockStep::__update(MCCableRegraspController & ctl)
     { 
         // Close/lock left gripper.
         auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({0.1});
+        gripper->setTargetQ({0.0});
         // Close right gripper.        
         gripper = ctl.grippers["r_gripper"].get();
         gripper->setTargetQ({-0.5});

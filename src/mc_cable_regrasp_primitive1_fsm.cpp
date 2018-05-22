@@ -147,7 +147,7 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
         leftPos = std::get<0>(tt);
         Eigen::Vector3d leftVel;
         leftVel = std::get<1>(tt);
-        //ctl.lh2Task->positionTask->refvel(leftVel);
+        //ctl.lh2Task->positionTask->refVel(leftVel);
         Eigen::Vector3d leftAccel;
         leftAccel = std::get<2>(tt);
         //ctl.lh2Task->positionTask->refAccel(leftAccel)
@@ -160,7 +160,7 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
         rightPos = std::get<0>(tt);
         Eigen::Vector3d rightVel;
         rightVel = std::get<1>(tt);
-        //ctl.rh2Task->positionTask->refvel(rightVel);
+        //ctl.rh2Task->positionTask->refVel(rightVel);
         Eigen::Vector3d rightAccel;
         rightAccel = std::get<2>(tt);
         //ctl.rh2Task->positionTask->refAccel(rightAccel);
