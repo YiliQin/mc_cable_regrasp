@@ -41,6 +41,7 @@ void Primitive1::prim_config(double par1, double par2, MCCableRegraspController 
     par2 = par2;
     ctl.neglectFctInp = ctl.neglectFctInp;
 
+    // create FSM
     step = new Prim1InitStep();
 }
 

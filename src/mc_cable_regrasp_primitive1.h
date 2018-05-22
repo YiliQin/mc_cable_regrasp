@@ -3,6 +3,7 @@
 
 #include "mc_cable_regrasp_basicPrimitive.h"
 #include "mc_cable_regrasp_primitive1_fsm.h"
+#include "mc_cable_regrasp_primitive1_traj1.h"
 
 namespace mc_control
 {
@@ -19,7 +20,8 @@ struct Primitive1 : public BasicPrimitive
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
         //
         double get_slideLen();
-    public:
+
+    private:
         // FSM pointer.
         Prim1Step * step = nullptr;  
         // Parameter 1 - slide length along the cable.

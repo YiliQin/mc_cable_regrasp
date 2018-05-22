@@ -19,7 +19,8 @@ struct Primitive2 : public BasicPrimitive
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
         //
         double get_slideLen();
-    public:
+
+    private:
         // FSM pointer.
         Prim2Step * step = nullptr;  
         // Parameter 1 - slide length along the cable.

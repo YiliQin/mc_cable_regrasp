@@ -18,7 +18,7 @@ struct Primitive3 : public BasicPrimitive
         virtual void prim_config(double par1, double par2, MCCableRegraspController & ctl) override;
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
 
-    public:
+    private:
         // FSM pointer.
         Prim3Step * step = nullptr;  
 };

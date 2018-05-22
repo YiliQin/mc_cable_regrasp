@@ -93,6 +93,34 @@ void Prim1SpreadStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive1: Prim1SpreadStep: __init()." << std::endl;
 
     ctl.prim1->set_stepByStep(stepByStep_);
+    // left gripper
+    sva::PTransformd leftGripper;
+    leftGripper = ctl.lh2Task->get_ef_pose();
+    Eigen::Vector3d startPosLeft;
+    startPosLeft = leftGripper.translation();
+    Eigen::Matrix3d startRotLeft;
+    startRotLeft = leftGripper.rotation();
+    Eigen::Vector3d leftDiff;
+    leftDiff << 0.0, ctl.prim1->get_slideLen()/2, 0.0;
+    Eigen::Vector3d endPosLeft;
+    endPosLeft = startPosLeft + leftDiff;
+    Eigen::Matrix3d endRotLeft;
+    endRotLeft = startRotLeft;
+    leftHandLinearTraj = new Prim1Traj1(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
+    // right gripper
+    sva::PTransformd rightGripper;
+    rightGripper = ctl.rh2Task->get_ef_pose();
+    Eigen::Vector3d startPosRight;
+    startPosRight = rightGripper.translation();
+    Eigen::Matrix3d startRotRight;
+    startRotRight = rightGripper.rotation();
+    Eigen::Vector3d rightDiff;
+    rightDiff << 0.0, -(ctl.prim1->get_slideLen()/2), 0.0;
+    Eigen::Vector3d endPosRight;
+    endPosRight = startPosRight + rightDiff;
+    Eigen::Matrix3d endRotRight;
+    endRotRight = startRotRight;
+    rightHandLinearTraj = new Prim1Traj1(startPosRight, endPosRight, startRotRight, endRotRight, nr_points_traj);
 }
 
 Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
@@ -101,29 +129,48 @@ Prim1Step * Prim1SpreadStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive1: Prim1SpreadStep: __update()." << std::endl;
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    // Left hand.
-    Eigen::Vector3d leftDiff;
-    leftDiff << 0.0, ctl.prim1->get_slideLen()/2, 0.0;
-    sva::PTransformd leftGripper;
-    leftGripper = ctl.lh2Task->get_ef_pose();
-    Eigen::Matrix3d leftRot;
-    leftRot = leftGripper.rotation();
-    Eigen::Vector3d leftTrans;
-    leftTrans = leftGripper.translation() + leftDiff;
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftTrans));
-    
-    // Right hand.
-    Eigen::Vector3d rightDiff;
-    rightDiff << 0.0, -(ctl.prim1->get_slideLen())/2, 0.0;
-    sva::PTransformd rightGripper;
-    rightGripper = ctl.rh2Task->get_ef_pose();
-    Eigen::Matrix3d rightRot;
-    rightRot = rightGripper.rotation();
-    Eigen::Vector3d rightTrans;
-    rightTrans = rightGripper.translation() + rightDiff;
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, rightTrans));
-
-    return new Prim1CloseGripperStep;
+    Eigen::Vector3d vzero = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d mide = Eigen::Matrix3d::Identity();
+    std::tuple<Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Matrix3d> tt(vzero, vzero, vzero, mide); 
+    if (cntRun >= nr_points_traj)
+    {
+        cntRun = 0;
+        delete leftHandLinearTraj;
+        delete rightHandLinearTraj;
+        return new Prim1CloseGripperStep;
+    }
+    else
+    {
+        // left gripper
+        tt = leftHandLinearTraj->pop();
+        Eigen::Vector3d leftPos;
+        leftPos = std::get<0>(tt);
+        Eigen::Vector3d leftVel;
+        leftVel = std::get<1>(tt);
+        //ctl.lh2Task->positionTask->refvel(leftVel);
+        Eigen::Vector3d leftAccel;
+        leftAccel = std::get<2>(tt);
+        //ctl.lh2Task->positionTask->refAccel(leftAccel)
+        Eigen::Matrix3d leftRot;
+        leftRot = std::get<3>(tt);
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftPos));
+        // right gripper
+        tt = rightHandLinearTraj->pop();
+        Eigen::Vector3d rightPos;
+        rightPos = std::get<0>(tt);
+        Eigen::Vector3d rightVel;
+        rightVel = std::get<1>(tt);
+        //ctl.rh2Task->positionTask->refvel(rightVel);
+        Eigen::Vector3d rightAccel;
+        rightAccel = std::get<2>(tt);
+        //ctl.rh2Task->positionTask->refAccel(rightAccel);
+        Eigen::Matrix3d rightRot;
+        rightRot = std::get<3>(tt);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, rightPos));
+        //
+        cntRun++;
+        return this;
+    }
 }
 
 /////////////////////////////////////////////////////////////
@@ -145,9 +192,11 @@ Prim1Step * Prim1CloseGripperStep::__update(MCCableRegraspController & ctl)
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
-    double diff;    
-    diff = ctl.rh2Task->eval().norm();
-    if (diff <= 1e-2)
+    double diffLeft;    
+    diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if ((diffLeft <= 1e-2) && (diffRight <= 1e-2))
     {    
         return new Prim1InitPoseStep;
     }

@@ -4,6 +4,7 @@
 #include <Eigen/Core>
 
 #include "mc_cable_regrasp_controller.h"
+#include "mc_cable_regrasp_primitive1_traj1.h"
 
 namespace mc_control
 {
@@ -44,7 +45,10 @@ CREATE_STEP(Prim1OpenGripperStep, "Primitive1 Open Gripper Step",
 
 CREATE_STEP(Prim1SpreadStep, "Primitive1 Spread Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                Prim1Traj1 * leftHandLinearTraj;
+                Prim1Traj1 * rightHandLinearTraj;
+                int nr_points_traj = 100;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim1CloseGripperStep, "Primitive1 Close Gripper Step",
