@@ -184,14 +184,23 @@ Prim5Step * Prim5CloseGripperStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff < 1e-2)
     {
-        // Close left gripper.
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({-0.5});
-        // Close right gripper.        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({-0.5});
-
-        return new Prim5HangStep;
+        static bool closed = false;
+        if(!closed)
+        {
+          closed = true;
+          // Close left gripper.
+          auto gripper = ctl.grippers["l_gripper"].get();
+          gripper->setTargetQ({-0.5});
+          // Close right gripper.        
+          gripper = ctl.grippers["r_gripper"].get();
+          gripper->setTargetQ({-0.5});
+        }
+        static int wait = 0;
+        if(wait++ == 200)
+        {
+          wait = 0; closed = false;
+          return new Prim5HangStep;
+        }
     }
     return this;
 }
