@@ -30,18 +30,15 @@ void Prim3InitStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: InitSetp: __init()."<< std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
     
     ctl.prim3->set_stepByStep(stepByStep_);
 }
 
-Prim3Step * Prim3InitStep::__update(MCCableRegraspController & ctl)
+Prim3Step * Prim3InitStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive3: Prim3InitStep: __update()." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    //return this;
     return new Prim3OpenGripperStep;
 }
 
@@ -53,7 +50,6 @@ void Prim3OpenGripperStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3OpenGripperStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
     // Close left gripper.
@@ -69,7 +65,6 @@ Prim3Step * Prim3OpenGripperStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive3: Prim3OpenGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
     static int wait = 0;
@@ -93,7 +88,6 @@ void Prim3LeftHandFlipStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3LeftHandFlipStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
  
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -129,7 +123,6 @@ void Prim3ToCenterStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3ToCenterStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -167,7 +160,6 @@ void Prim3RegraspStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3RegraspStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -209,7 +201,6 @@ void Prim3RightHandLockStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3RightHandLockStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -223,10 +214,10 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff <= 1e-2)
     { 
-        static bool gripper_changed = false;
-        if(!gripper_changed)
+        static bool closed = false;
+        if(closed == false)
         {
-          gripper_changed = true;
+          closed = true;
           // Close left gripper.
           auto gripper = ctl.grippers["l_gripper"].get();
           gripper->setTargetQ({-0.5});
@@ -238,10 +229,10 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
         // Wait.
         static int wait = 0;
         wait++;
-        if (wait == 500)
+        if (wait == 200)
         {
             wait = 0;
-            gripper_changed = false;
+            closed = false;
             return new Prim3BothFlipStep;
         }
     }
@@ -256,7 +247,6 @@ void Prim3BothFlipStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3BothFlipStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -266,49 +256,43 @@ Prim3Step * Prim3BothFlipStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive3: Prim3BothFlipStep: __update()." << std::endl;
 
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff <= 1e-2)
-    { 
-        // Left hand.
-        sva::PTransformd leftGripper;
-        leftGripper = ctl.lh2Task->get_ef_pose();
-        Eigen::Matrix3d leftRot;
-        leftRot = leftGripper.rotation();
-        Eigen::Vector3d leftTrans;
-        leftTrans = leftGripper.translation();
-        // Exchange position.
-        Eigen::Vector3d exPosLeft;
-        //exPosLeft << 0.25, 0.20, 0.90;
-        exPosLeft << 0.25, 0.20, 1.0;
-        // Rotation
-        Eigen::Matrix3d tLeft;
-        // rotz(-90)
-        tLeft << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+    // Left hand.
+    sva::PTransformd leftGripper;
+    leftGripper = ctl.lh2Task->get_ef_pose();
+    Eigen::Matrix3d leftRot;
+    leftRot = leftGripper.rotation();
+    Eigen::Vector3d leftTrans;
+    leftTrans = leftGripper.translation();
+    // Exchange position.
+    Eigen::Vector3d exPosLeft;
+    //exPosLeft << 0.25, 0.20, 0.90;
+    exPosLeft << 0.25, 0.20, 1.0;
+    // Rotation
+    Eigen::Matrix3d tLeft;
+    // rotz(-90)
+    tLeft << 0, 1, 0, -1, 0, 0, 0, 0, 1;
 
-        // Right hand.
-        sva::PTransformd rightGripper;
-        rightGripper = ctl.rh2Task->get_ef_pose();
-        Eigen::Matrix3d rightRot;
-        rightRot = rightGripper.rotation();
-        Eigen::Vector3d rightTrans;
-        rightTrans = rightGripper.translation();
-        // Exchange position.
-        Eigen::Vector3d exPosRight;
-        //exPosRight << 0.25, -0.20, 0.90;
-        exPosRight << 0.25, -0.20, 1.0;
-        // Rotation
-        Eigen::Matrix3d tRight;
-        // rotz(90)
-        tRight << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+    // Right hand.
+    sva::PTransformd rightGripper;
+    rightGripper = ctl.rh2Task->get_ef_pose();
+    Eigen::Matrix3d rightRot;
+    rightRot = rightGripper.rotation();
+    Eigen::Vector3d rightTrans;
+    rightTrans = rightGripper.translation();
+    // Exchange position.
+    Eigen::Vector3d exPosRight;
+    //exPosRight << 0.25, -0.20, 0.90;
+    exPosRight << 0.25, -0.20, 1.0;
+    // Rotation
+    Eigen::Matrix3d tRight;
+    // rotz(90)
+    tRight << 0, -1, 0, 1, 0, 0, 0, 0, 1;
 
-        // Both move.
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(tLeft.inverse(), exPosLeft));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(tRight.inverse(), exPosRight));
+    // Both move.
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(tLeft.inverse(), exPosLeft));
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(tRight.inverse(), exPosRight));
 
-        return new Prim3InitPoseStep;
-    }
-    return this;
+    return new Prim3InitPoseStep;
 }
 
 /////////////////////////////////////////////////////////////
@@ -319,7 +303,6 @@ void Prim3InitPoseStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3SecondStep: __init()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
 }
@@ -328,11 +311,12 @@ Prim3Step * Prim3InitPoseStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive3: Prim3SecondStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    double  diff;
-    diff = ctl.lh2Task->eval().norm();
-    if (diff <= 1e-2)
+    double  diffLeft;
+    diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if ((diffLeft <= 1e-2) && (diffRight <= 1e-2))
     {
          return new Prim3EndStep;
     } 
@@ -343,20 +327,17 @@ Prim3Step * Prim3InitPoseStep::__update(MCCableRegraspController & ctl)
 //  Primitive3 End Step
 /////////////////////////////////////////////////////////////
 
-void Prim3EndStep::__init(MCCableRegraspController & ctl)
+void Prim3EndStep::__init(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive3: Prim3EndStep: init." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
-Prim3Step * Prim3EndStep::__update(MCCableRegraspController & ctl)
+Prim3Step * Prim3EndStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive3: Prim3EndStep: update." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    //ctl.prim3->finish = true;
     return nullptr;
 }
 }

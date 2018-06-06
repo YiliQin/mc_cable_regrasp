@@ -40,7 +40,7 @@ CREATE_STEP(Prim2InitStep, "Primitive2 Initialization Step",
 
 CREATE_STEP(Prim2OpenGripperStep, "Primitive2 Open Gripper Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim2SpreadStep, "Primitive2 Spread Step",
@@ -53,12 +53,12 @@ CREATE_STEP(Prim2SpreadStep, "Primitive2 Spread Step",
 
 CREATE_STEP(Prim2CloseGripperStep, "Primitive2 Close Gripper Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim2InitPoseStep, "Primitive2 Initial Pose Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim2EndStep, "Primitive2 End Step",

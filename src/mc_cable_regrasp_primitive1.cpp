@@ -9,14 +9,12 @@ Primitive1::Primitive1()
 {
 }
 
-Primitive1::Primitive1(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
+Primitive1::Primitive1(int primitiveID, std::string primitiveDes, MCCableRegraspController &)
     : BasicPrimitive(primitiveID, primitiveDes)
 {
     // For test.
     //std::cout << "Primitive1 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    // Reset.
     reset();
 }
 
@@ -34,12 +32,11 @@ void Primitive1::reset()
     finish = false;
 }
 
-void Primitive1::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+void Primitive1::prim_config(double par1, double par2, MCCableRegraspController &)
 {
     // Set parameter1.
     slideLen = par1;
     par2 = par2;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     // create FSM
     step = new Prim1InitStep();

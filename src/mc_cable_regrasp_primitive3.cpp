@@ -9,14 +9,12 @@ Primitive3::Primitive3()
 {
 }
 
-Primitive3::Primitive3(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
+Primitive3::Primitive3(int primitiveID, std::string primitiveDes, MCCableRegraspController &)
     : BasicPrimitive(primitiveID, primitiveDes)
 {
     // For test.
     //std::cout << "Primitive3 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    // Reset.
     reset();
 }
 
@@ -34,12 +32,11 @@ void Primitive3::reset()
     finish = false;
 }
 
-void Primitive3::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+void Primitive3::prim_config(double par1, double par2, MCCableRegraspController &)
 {
     // Set parameter.
     par1 = par1;
     par2 = par2;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     step = new Prim3InitStep();
 }

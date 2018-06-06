@@ -39,27 +39,27 @@ CREATE_STEP(Prim5InitStep, "Primitive5 Initialization Step",
 
 CREATE_STEP(Prim5PreGraspStep, "Primitive5 Prepare Grasp Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim5OpenGripperStep, "Primitive5 Open Gripper Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim5GraspStep, "Primitive5 Grasp Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim5CloseGripperStep, "Primitive5 Close Gripper Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim5HangStep, "Primitive5 Hang Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim5InitPoseStep, "Primitive5 Initial Pose Step",

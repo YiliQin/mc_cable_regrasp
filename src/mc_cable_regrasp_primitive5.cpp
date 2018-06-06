@@ -9,13 +9,11 @@ Primitive5::Primitive5()
 {
 }
 
-Primitive5::Primitive5(int primitiveID, std::string primitiveDes, MCCableRegraspController & ctl)
+Primitive5::Primitive5(int primitiveID, std::string primitiveDes, MCCableRegraspController &)
     : BasicPrimitive(primitiveID, primitiveDes)
 {
     // For test.
     //std::cout << "Primitive5 construction: " << primitiveID << " " <<  primitiveDes << std::endl; 
-    // Further consider to put in which function.
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     reset();
 }
@@ -34,12 +32,11 @@ void Primitive5::reset()
     finish = false;
 }
 
-void Primitive5::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+void Primitive5::prim_config(double par1, double par2, MCCableRegraspController &)
 {
     // Set parameter1.
     disBetHands = par1;
     par2 = par2;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     step = new Prim5InitStep();
 }

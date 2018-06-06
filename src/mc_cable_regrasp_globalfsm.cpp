@@ -37,14 +37,11 @@ void InitStep::__init(MCCableRegraspController & ctl)
     ctl.stepByStep = stepByStep_;
 }
 
-GlobalTestStep * InitStep::__update(MCCableRegraspController & ctl)
+GlobalTestStep * InitStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Global: InitStep: __update()." << std::endl;
-    
-    //return this;
 
-    ctl.neglectFctInp = ctl.neglectFctInp;
     return new InitialPoseStep;
 }
 
@@ -59,12 +56,10 @@ void InitialPoseStep::__init(MCCableRegraspController & ctl)
     ctl.stepByStep = stepByStep_;
 }
 
-GlobalTestStep * InitialPoseStep::__update(MCCableRegraspController & ctl)
+GlobalTestStep * InitialPoseStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Global: InitialPoseStep: __update()." << std::endl;
-    //return this;
-    ctl.neglectFctInp = ctl.neglectFctInp;
     
     return new PlannerRunStep;
 }
@@ -84,7 +79,6 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: PlannerRunStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     PrimInfo primInfo;
 
@@ -181,7 +175,6 @@ GlobalTestStep * QueueReadStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: PlannerRunStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     if (ctl.quePrim.empty() == false)
     {
@@ -246,7 +239,6 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Global: ResExeStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     switch (ctl.primType)
     {
@@ -322,18 +314,16 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
 //  End Step
 ////////////////////////////////////////////////////////////
 
-void EndStep::__init(MCCableRegraspController & ctl)
+void EndStep::__init(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Global: EndStep: __init()." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
-GlobalTestStep * EndStep::__update(MCCableRegraspController & ctl)
+GlobalTestStep * EndStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Global: EndStep: update" << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return nullptr;
 }

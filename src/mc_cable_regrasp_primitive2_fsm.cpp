@@ -34,14 +34,11 @@ void Prim2InitStep::__init(MCCableRegraspController & ctl)
     ctl.prim2->set_stepByStep(stepByStep_);
 }
 
-Prim2Step * Prim2InitStep::__update(MCCableRegraspController & ctl)
+Prim2Step * Prim2InitStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive2: Prim2InitStep: __update()." << std::endl;
-    //return this;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    //return this;
     return new Prim2OpenGripperStep;
 }
 
@@ -128,7 +125,6 @@ Prim2Step * Prim2SpreadStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive1: Prim2SpreadStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     Eigen::Vector3d vzero = Eigen::Vector3d::Zero();
     Eigen::Matrix3d mide = Eigen::Matrix3d::Identity();
@@ -190,7 +186,6 @@ Prim2Step * Prim2CloseGripperStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive2: Prim2CloseGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
     double diffLeft;    
@@ -198,8 +193,26 @@ Prim2Step * Prim2CloseGripperStep::__update(MCCableRegraspController & ctl)
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
     if ((diffLeft <= 1e-2) && (diffRight <= 1e-2))
-    {    
-        return new Prim2InitPoseStep;
+    {
+        static bool gripper_changed = false;
+        if (gripper_changed == false)
+        {
+            gripper_changed = true;
+            // close left gripper
+            auto gripper = ctl.grippers["l_gripper"].get();
+            gripper->setTargetQ({-0.5});
+            // close right gripper        
+            gripper = ctl.grippers["r_gripper"].get();
+            gripper->setTargetQ({-0.5});
+        }
+        static int wait = 0;
+        wait++;
+        if (wait == 200)
+        {
+            wait = 0;
+            gripper_changed = false;
+            return new Prim2InitPoseStep;
+        }
     }
     return this;
 }
@@ -215,11 +228,10 @@ void Prim2InitPoseStep::__init(MCCableRegraspController & ctl)
     ctl.prim2->set_stepByStep(stepByStep_);
 }
 
-Prim2Step * Prim2InitPoseStep::__update(MCCableRegraspController & ctl)
+Prim2Step * Prim2InitPoseStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive2: Prim2SecondStep: __update()." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return new Prim2EndStep;
 }
@@ -228,20 +240,17 @@ Prim2Step * Prim2InitPoseStep::__update(MCCableRegraspController & ctl)
 //  Primitive2 End Step
 /////////////////////////////////////////////////////////////
 
-void Prim2EndStep::__init(MCCableRegraspController & ctl)
+void Prim2EndStep::__init(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive2: Prim2EndStep: init." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
-Prim2Step * Prim2EndStep::__update(MCCableRegraspController & ctl)
+Prim2Step * Prim2EndStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive2: Prim2EndStep: update." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
-    //ctl.prim2->finish = true; 
     return nullptr;
 }
 

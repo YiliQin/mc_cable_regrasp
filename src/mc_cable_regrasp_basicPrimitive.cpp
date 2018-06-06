@@ -20,16 +20,14 @@ void BasicPrimitive::reset()
     primitiveDes = "Please Input Description.";
 }
 
-void BasicPrimitive::prim_config(double par1, double par2, MCCableRegraspController & ctl)
+void BasicPrimitive::prim_config(double par1, double par2, MCCableRegraspController &)
 {
     par1 = par1;
     par2 = par2;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
-void BasicPrimitive::prim_fsm_run(MCCableRegraspController & ctl)
+void BasicPrimitive::prim_fsm_run(MCCableRegraspController &)
 {
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
 int BasicPrimitive::getID()

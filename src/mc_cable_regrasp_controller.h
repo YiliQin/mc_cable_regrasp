@@ -59,7 +59,6 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         std::queue<PrimInfo> quePrim;
         
         // FLAG - For global FSM.
-        bool neglectFctInp = false;
         bool stepByStep = false;
         bool paused = false;
         

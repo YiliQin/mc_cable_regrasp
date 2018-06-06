@@ -34,11 +34,10 @@ void Prim5InitStep::__init(MCCableRegraspController & ctl)
     ctl.prim5->set_stepByStep(stepByStep_);
 }
 
-Prim5Step * Prim5InitStep::__update(MCCableRegraspController & ctl)
+Prim5Step * Prim5InitStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive5: Prim5InitStep: __update()." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return new Prim5PreGraspStep;
 }
@@ -102,20 +101,32 @@ Prim5Step * Prim5OpenGripperStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive5: Prim5OpenGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    double diffLeft;
+    diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
-        // Open left gripper.
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({0.5});
-        // Open right gripper.        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({0.5});
-
-        return new Prim5GraspStep;
+        static bool opened = false;
+        if (opened == false)
+        {
+            opened = true;
+            // Open left gripper.
+            auto gripper = ctl.grippers["l_gripper"].get();
+            gripper->setTargetQ({0.5});
+            // Open right gripper.        
+            gripper = ctl.grippers["r_gripper"].get();
+            gripper->setTargetQ({0.5});
+        }
+        static int wait = 0;
+        wait++;
+        if (wait == 200)
+        {
+            wait = 0;
+            opened = false;  
+            return new Prim5GraspStep;
+        }
     }
     return this;
 }
@@ -137,29 +148,23 @@ Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5GraspStep: __update()." << std::endl;
     
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
-    {
-        // Left gripper.
-        Eigen::Matrix3d leftRot;
-        // rotz(-90)
-        leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
-        Eigen::Vector3d leftPos;
-        leftPos << 0.3, ctl.prim5->get_distance()/2, 0.7;
-        // Right gripper.
-        Eigen::Matrix3d rightRot;
-        // rotz(90)
-        rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
-        Eigen::Vector3d rightPos;
-        rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.7;
-        //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+    // Left gripper.
+    Eigen::Matrix3d leftRot;
+    // rotz(-90)
+    leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+    Eigen::Vector3d leftPos;
+    leftPos << 0.3, ctl.prim5->get_distance()/2, 0.7;
+    // Right gripper.
+    Eigen::Matrix3d rightRot;
+    // rotz(90)
+    rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+    Eigen::Vector3d rightPos;
+    rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.7;
+    //
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
 
-        return new Prim5CloseGripperStep;
-    }
-    return this;
+    return new Prim5CloseGripperStep;
 }
 
 /////////////////////////////////////////////////////////////
@@ -178,14 +183,15 @@ Prim5Step * Prim5CloseGripperStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive5: Prim5CloseGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    double diffLeft;
+    diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
         static bool closed = false;
-        if(!closed)
+        if(closed == false)
         {
           closed = true;
           // Close left gripper.
@@ -198,7 +204,8 @@ Prim5Step * Prim5CloseGripperStep::__update(MCCableRegraspController & ctl)
         static int wait = 0;
         if(wait++ == 200)
         {
-          wait = 0; closed = false;
+          wait = 0;
+          closed = false;
           return new Prim5HangStep;
         }
     }
@@ -270,7 +277,6 @@ Prim5Step * Prim5InitPoseStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive5: Prim5InitPoseStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     double diff;
     diff = ctl.rh2Task->eval().norm();
@@ -285,19 +291,16 @@ Prim5Step * Prim5InitPoseStep::__update(MCCableRegraspController & ctl)
 //  Primitive5 End Step
 /////////////////////////////////////////////////////////////
 
-void Prim5EndStep::__init(MCCableRegraspController & ctl)
+void Prim5EndStep::__init(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive5: Prim5EndStep: init." << std::endl;
-
-    ctl.neglectFctInp = ctl.neglectFctInp;
 }
 
-Prim5Step * Prim5EndStep::__update(MCCableRegraspController & ctl)
+Prim5Step * Prim5EndStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive5: Prim5EndStep: update." << std::endl;
-    ctl.neglectFctInp = ctl.neglectFctInp;
 
     return nullptr;
 }

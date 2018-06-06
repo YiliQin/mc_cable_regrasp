@@ -39,27 +39,27 @@ CREATE_STEP(Prim3InitStep, "Primitive3 Initialization Step",
 
 CREATE_STEP(Prim3OpenGripperStep, "Primitive3 Open Gripper Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim3LeftHandFlipStep, "Primitive3 Left Hand Flip Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim3RegraspStep, "Primitive3 Left Hand Regrasp Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim3ToCenterStep, "Primitive3 To Center Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim3RightHandLockStep, "Primitive3 Right Hand Lock Step",
                 bool stepByStep_ = true;
-                int cnt = 0;
+                int cntRun = 0;
                 )
 
 CREATE_STEP(Prim3BothFlipStep, "Primitive3 Both Hands Flip Step",
