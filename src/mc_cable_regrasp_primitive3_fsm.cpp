@@ -56,20 +56,20 @@ void Prim3OpenGripperStep::__init(MCCableRegraspController & ctl)
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim3->set_stepByStep(stepByStep_);
-}
-
-Prim3Step * Prim3OpenGripperStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive3: Prim3OpenGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
-
     // Close left gripper.
     auto gripper = ctl.grippers["l_gripper"].get();
     gripper->setTargetQ({-0.5});
     // Open right gripper.        
     gripper = ctl.grippers["r_gripper"].get();
     gripper->setTargetQ({0.5});
+
+}
+
+Prim3Step * Prim3OpenGripperStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive3: Prim3OpenGripperStep: __update()." << std::endl;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
     static int wait = 0;
@@ -223,12 +223,17 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff <= 1e-2)
     { 
-        // Close left gripper.
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({-0.5});
-        // Close/lock right gripper.        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({0.0});
+        static bool gripper_changed = false;
+        if(!gripper_changed)
+        {
+          gripper_changed = true;
+          // Close left gripper.
+          auto gripper = ctl.grippers["l_gripper"].get();
+          gripper->setTargetQ({-0.5});
+          // Close/lock right gripper.        
+          gripper = ctl.grippers["r_gripper"].get();
+          gripper->setTargetQ({0.0});
+        }
 
         // Wait.
         static int wait = 0;
@@ -236,6 +241,7 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
         if (wait == 500)
         {
             wait = 0;
+            gripper_changed = false;
             return new Prim3BothFlipStep;
         }
     }

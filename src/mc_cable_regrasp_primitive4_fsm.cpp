@@ -56,13 +56,6 @@ void Prim4OpenGripperStep::__init(MCCableRegraspController & ctl)
     //ctl.neglectFctInp = ctl.neglectFctInp;
 
     ctl.prim4->set_stepByStep(stepByStep_);
-}
-
-Prim4Step * Prim4OpenGripperStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive4: Prim4OpenGripperStep: __update()." << std::endl;
-    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Open left gripper.
     auto gripper = ctl.grippers["l_gripper"].get();
@@ -70,6 +63,14 @@ Prim4Step * Prim4OpenGripperStep::__update(MCCableRegraspController & ctl)
     // Close right gripper.        
     gripper = ctl.grippers["r_gripper"].get();
     gripper->setTargetQ({-0.5});
+
+}
+
+Prim4Step * Prim4OpenGripperStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive4: Prim4OpenGripperStep: __update()." << std::endl;
+    //ctl.neglectFctInp = ctl.neglectFctInp;
 
     // Wait.
     static int wait = 0;
@@ -223,12 +224,17 @@ Prim4Step * Prim4LeftHandLockStep::__update(MCCableRegraspController & ctl)
     diff = ctl.lh2Task->eval().norm();
     if (diff <= 1e-2)
     { 
-        // Close/lock left gripper.
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({0.0});
-        // Close right gripper.        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({-0.5});
+        static bool closed = false;
+        if(!closed)
+        {
+          closed = true;
+          // Close/lock left gripper.
+          auto gripper = ctl.grippers["l_gripper"].get();
+          gripper->setTargetQ({0.0});
+          // Close right gripper.        
+          gripper = ctl.grippers["r_gripper"].get();
+          gripper->setTargetQ({-0.5});
+        }
 
         // Wait.
         static int wait = 0;
@@ -236,6 +242,7 @@ Prim4Step * Prim4LeftHandLockStep::__update(MCCableRegraspController & ctl)
         if (wait == 200)
         {
             wait = 0;
+            closed = false;
             return new Prim4BothFlipStep;
         }
     }

@@ -55,12 +55,6 @@ void Prim2OpenGripperStep::__init(MCCableRegraspController & ctl)
     //std::cout << "Primitive2: Prim2OpenGripperStep: __init()." << std::endl;
 
     ctl.prim2->set_stepByStep(stepByStep_);
-}
-
-Prim2Step * Prim2OpenGripperStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive2: Prim2OpenGripperStep: __update()." << std::endl;
 
     // Loose left gripper.
     auto gripper = ctl.grippers["l_gripper"].get();
@@ -68,6 +62,13 @@ Prim2Step * Prim2OpenGripperStep::__update(MCCableRegraspController & ctl)
     // Fixed right gripper.        
     gripper = ctl.grippers["r_gripper"].get();
     gripper->setTargetQ({-0.5});
+
+}
+
+Prim2Step * Prim2OpenGripperStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive2: Prim2OpenGripperStep: __update()." << std::endl;
 
     // Wait.
     static int wait = 0;
