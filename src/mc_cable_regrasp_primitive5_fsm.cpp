@@ -278,9 +278,11 @@ Prim5Step * Prim5InitPoseStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5InitPoseStep: __update()." << std::endl;
 
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    double diffLeft;
+    diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
         return new Prim5EndStep;
     }

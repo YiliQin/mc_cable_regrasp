@@ -10,6 +10,8 @@
 #include <mc_rtc/ros.h>
 #include <mc_rbdyn/RobotLoader.h>
 
+#include <mc_tasks/EndEffectorTask.h>
+
 #ifdef MC_RTC_HAS_ROS
 #include <ros/ros.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -45,14 +47,17 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
 : MCController({robot_module,
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("bar")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("wall-holder")),
+        mc_rbdyn::RobotLoader::get_robot_module("object", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("circular_platform")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("ground"))},
         dt),
         tf_caster(0), seq(0), barCollisionConstraint(robots(), 0, 1, solver().dt())
 {
     // modify the model position and orientation error in Choreonoid
-    //robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
-    //robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
+    robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
+    robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
 
+    platformTask = std::make_shared<mc_tasks::PositionTask>("Cylinder", robots(), 3);
+    qpsolver->addTask(platformTask);
     qpsolver->addConstraintSet(contactConstraint);
     qpsolver->addConstraintSet(dynamicsConstraint);
     if(robot().name() == "hrp2_drc")
@@ -85,11 +90,6 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     });
     solver().addConstraintSet(barCollisionConstraint);
     qpsolver->addTask(postureTask.get());
-    qpsolver->setContacts({
-        mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
-        mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
-        //mc_rbdyn::Contact(robots(), "Butthock", "AllGround")
-    });
 
     lh2Task.reset(new mc_tasks::EndEffectorTask("LARM_LINK6", robots(), robots().robotIndex(), 2.0, 1e5));
     rh2Task.reset(new mc_tasks::EndEffectorTask("RARM_LINK6", robots(), robots().robotIndex(), 2.0, 1e5));
@@ -114,10 +114,18 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
 void MCCableRegraspController::reset(const ControllerResetData & reset_data)
 {
     MCController::reset(reset_data);
+    mc_rbdyn::Contact c{robots(), 3, 4, "Upperface", "AllGround"};
+    auto cId = c.contactId(robots());
+    Eigen::Matrix6d dof = Eigen::Matrix6d::Identity();
+    dof(4,4) = 0; // Free y-axis
+    contactConstraint.contactConstr->addDofContact(cId, dof);
+    contactConstraint.contactConstr->updateDofContacts();
     qpsolver->setContacts({
-        mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
-        mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
-        //mc_rbdyn::Contact(robots(), "Butthock", "AllGround")
+        //mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
+        //mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
+        mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "Upperface"),
+        mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "Upperface"),
+        c
     });
 
     lh2Task->reset();

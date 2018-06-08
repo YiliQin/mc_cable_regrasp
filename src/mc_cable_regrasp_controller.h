@@ -74,6 +74,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         std::shared_ptr<mc_tasks::EndEffectorTask> rh2Task;
         std::shared_ptr<mc_tasks::EndEffectorTask> chestTask;
         std::shared_ptr<mc_tasks::CoMTask> comTask;
+        std::shared_ptr<mc_tasks::PositionTask> platformTask;
         std::shared_ptr<tf2_ros::TransformBroadcaster> tf_caster;
         // 
         unsigned int seq;
