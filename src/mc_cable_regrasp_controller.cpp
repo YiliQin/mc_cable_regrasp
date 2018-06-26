@@ -47,7 +47,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
 : MCController({robot_module,
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("bar")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("wall-holder")),
-        mc_rbdyn::RobotLoader::get_robot_module("object", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("circular_platform")),
+        mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("circular_platform")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("ground"))},
         dt),
         tf_caster(0), seq(0), barCollisionConstraint(robots(), 0, 1, solver().dt())
@@ -56,7 +56,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
     robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
 
-    platformTask = std::make_shared<mc_tasks::PositionTask>("Cylinder", robots(), 3);
+    platformTask = std::make_shared<mc_tasks::PostureTask>(solver(), 3, 2.0, 1000.0);
     qpsolver->addTask(platformTask);
     qpsolver->addConstraintSet(contactConstraint);
     qpsolver->addConstraintSet(dynamicsConstraint);
@@ -114,18 +114,11 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
 void MCCableRegraspController::reset(const ControllerResetData & reset_data)
 {
     MCController::reset(reset_data);
-    mc_rbdyn::Contact c{robots(), 3, 4, "Upperface", "AllGround"};
-    auto cId = c.contactId(robots());
-    Eigen::Matrix6d dof = Eigen::Matrix6d::Identity();
-    dof(4,4) = 0; // Free y-axis
-    contactConstraint.contactConstr->addDofContact(cId, dof);
-    contactConstraint.contactConstr->updateDofContacts();
     qpsolver->setContacts({
         //mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
         //mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
         mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "Upperface"),
         mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "Upperface"),
-        c
     });
 
     lh2Task->reset();
