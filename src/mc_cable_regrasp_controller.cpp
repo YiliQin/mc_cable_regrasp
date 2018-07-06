@@ -268,16 +268,33 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         set_joint_pos("HEAD_JOINT0", pan);
         set_joint_pos("HEAD_JOINT1", tilt); 
     }
-    else if(token == "OpenRGripper")
+    else if(token == "Continue")
+    {
+        cmdContinue = true;
+        return true;
+    }
+    else if(token == "OpenRightGripper")
     {
         auto gripper = grippers["r_gripper"].get();
         gripper->setTargetQ({0.5});
         return true;  
     }
-    else if(token == "CloseRGripper")
+    else if(token == "CloseRightGripper")
     {
         auto gripper = grippers["r_gripper"].get();
-        gripper->setTargetQ({-0.5});
+        gripper->setTargetQ({-0.7});
+        return true;
+    }
+    else if(token == "OpenLeftGripper")
+    {
+        auto gripper = grippers["l_gripper"].get();
+        gripper->setTargetQ({0.5});
+        return true;  
+    }
+    else if(token == "CloseLeftGripper")
+    {
+        auto gripper = grippers["l_gripper"].get();
+        gripper->setTargetQ({-0.7});
         return true;
     }
     else

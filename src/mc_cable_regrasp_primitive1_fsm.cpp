@@ -55,7 +55,7 @@ void Prim1OpenGripperStep::__init(MCCableRegraspController & ctl)
 
     // Fxied left gripper.
     auto gripper = ctl.grippers["l_gripper"].get();
-    gripper->setTargetQ({-0.5});
+    gripper->setTargetQ({-0.7});
     // Loose right gripper.        
     gripper = ctl.grippers["r_gripper"].get();
     gripper->setTargetQ({0.0});
@@ -199,10 +199,10 @@ Prim1Step * Prim1CloseGripperStep::__update(MCCableRegraspController & ctl)
             gripper_changed = true;
             // close left gripper
             auto gripper = ctl.grippers["l_gripper"].get();
-            gripper->setTargetQ({-0.5});
+            gripper->setTargetQ({-0.7});
             // close right gripper        
             gripper = ctl.grippers["r_gripper"].get();
-            gripper->setTargetQ({-0.5});
+            gripper->setTargetQ({-0.7});
         }
         static int wait = 0;
         wait++;
