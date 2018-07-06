@@ -49,6 +49,9 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         virtual bool read_write_msg(std::string & msg, std::string & out) override;
 
     public:
+        // for test
+        bool cmdContinue = false;
+
         // Primitive.
         GlobalTestStep * step = nullptr;
         Primitive1 * prim1 = nullptr;
