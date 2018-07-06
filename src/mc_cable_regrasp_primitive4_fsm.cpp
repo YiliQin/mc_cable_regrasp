@@ -68,7 +68,7 @@ Prim4Step * Prim4OpenGripperStep::__update(MCCableRegraspController &)
     // Wait.
     static int wait = 0;
     wait++;
-    if (wait == 200)
+    if (wait == 500)
     {
         wait = 0;
         return new Prim4RightHandFlipStep;
@@ -228,7 +228,7 @@ Prim4Step * Prim4LeftHandLockStep::__update(MCCableRegraspController & ctl)
         // Wait.
         static int wait = 0;
         wait++;
-        if (wait == 200)
+        if (wait == 500)
         {
             wait = 0;
             closed = false;

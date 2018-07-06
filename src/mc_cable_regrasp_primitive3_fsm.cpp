@@ -69,7 +69,7 @@ Prim3Step * Prim3OpenGripperStep::__update(MCCableRegraspController &)
     // Wait.
     static int wait = 0;
     wait++;
-    if (wait == 200)
+    if (wait == 500)
     {
         wait = 0;
         return new Prim3LeftHandFlipStep;
@@ -229,7 +229,7 @@ Prim3Step * Prim3RightHandLockStep::__update(MCCableRegraspController & ctl)
         // Wait.
         static int wait = 0;
         wait++;
-        if (wait == 200)
+        if (wait == 500)
         {
             wait = 0;
             closed = false;

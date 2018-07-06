@@ -121,7 +121,7 @@ Prim5Step * Prim5OpenGripperStep::__update(MCCableRegraspController & ctl)
         }
         static int wait = 0;
         wait++;
-        if (wait == 200)
+        if (wait == 500)
         {
             wait = 0;
             opened = false;  
@@ -202,7 +202,7 @@ Prim5Step * Prim5CloseGripperStep::__update(MCCableRegraspController & ctl)
           gripper->setTargetQ({-0.5});
         }
         static int wait = 0;
-        if(wait++ == 200)
+        if(wait++ == 500)
         {
           wait = 0;
           closed = false;

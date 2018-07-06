@@ -69,7 +69,7 @@ Prim1Step * Prim1OpenGripperStep::__update(MCCableRegraspController &)
     // Wait.
     static int wait = 0;
     wait++;
-    if (wait == 200)
+    if (wait == 500)
     {
         wait = 0;
         return new Prim1SpreadStep;
@@ -206,7 +206,7 @@ Prim1Step * Prim1CloseGripperStep::__update(MCCableRegraspController & ctl)
         }
         static int wait = 0;
         wait++;
-        if (wait == 200) 
+        if (wait == 500) 
         {
             wait = 0;
             gripper_changed = false;
