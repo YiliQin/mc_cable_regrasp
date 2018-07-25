@@ -49,7 +49,6 @@ CREATE_STEP(QueueReadStep, "Queue Read Step",
                 int cnt = 0;
                 )
 
-
 CREATE_STEP(ResExeStep, "Execute Planner Results Step",
                 bool stepByStep_ = true;
                 int cnt = 0;

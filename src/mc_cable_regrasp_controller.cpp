@@ -5,6 +5,7 @@
 #include "mc_cable_regrasp_primitive3.h"
 #include "mc_cable_regrasp_primitive4.h"
 #include "mc_cable_regrasp_primitive5.h"
+#include "mc_cable_regrasp_primitive6.h"
 
 #include <mc_rtc/logging.h>
 #include <mc_rtc/ros.h>
@@ -133,6 +134,7 @@ void MCCableRegraspController::reset(const ControllerResetData & reset_data)
     prim3 = new Primitive3(3, "Primivive 3", *this); 
     prim4 = new Primitive4(4, "Primivive 4", *this); 
     prim5 = new Primitive5(5, "Primivive 5", *this); 
+    prim6 = new Primitive6(6, "Primivive 6", *this); 
 }
 
 bool MCCableRegraspController::run()
