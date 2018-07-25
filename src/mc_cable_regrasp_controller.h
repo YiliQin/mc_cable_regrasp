@@ -24,6 +24,7 @@ struct Primitive2;
 struct Primitive3;
 struct Primitive4;
 struct Primitive5;
+struct Primitive6;
 
 struct PrimInfo
 {
@@ -59,6 +60,8 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         Primitive3 * prim3 = nullptr;
         Primitive4 * prim4 = nullptr;
         Primitive5 * prim5 = nullptr;
+        Primitive6 * prim6 = nullptr;
+
         std::queue<PrimInfo> quePrim;
         
         // FLAG - For global FSM.
