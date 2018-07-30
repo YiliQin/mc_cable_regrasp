@@ -63,6 +63,8 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         bool FLAG_SIMULATION_VREP = true;
         // for test
         bool cmdContinue = false;
+        // True for the initial reset
+        bool initial_reset = true;
 
         // Primitive.
         GlobalTestStep * step = nullptr;

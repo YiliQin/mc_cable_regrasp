@@ -59,12 +59,19 @@ Prim5Step * Prim5PreGraspStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim5PreGraspStep: __update()." << std::endl;
 
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
     // move chest
     Eigen::Matrix3d rot;
     rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
     Eigen::Vector3d t;     
     t << 0.0320, 0.0, 1.0;
-    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t));
+    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
     
     // Left gripper.
     Eigen::Matrix3d leftRot;
@@ -79,8 +86,8 @@ Prim5Step * Prim5PreGraspStep::__update(MCCableRegraspController & ctl)
     Eigen::Vector3d rightPos;
     rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.9;
     //
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
     return new Prim5OpenGripperStep;
 }
@@ -147,7 +154,14 @@ Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive5: Prim5GraspStep: __update()." << std::endl;
-    
+   
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
     // Left gripper.
     Eigen::Matrix3d leftRot;
     // rotz(-90)
@@ -161,8 +175,8 @@ Prim5Step * Prim5GraspStep::__update(MCCableRegraspController & ctl)
     Eigen::Vector3d rightPos;
     rightPos << 0.3, -(ctl.prim5->get_distance()/2), 0.7;
     //
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
     return new Prim5CloseGripperStep;
 }
@@ -233,12 +247,19 @@ Prim5Step * Prim5HangStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff <= 1e-2)
     {   
+        //
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+   
         // Cheset task.
         Eigen::Matrix3d rot;
         rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
         Eigen::Vector3d t;     
         t << 0.0320, 0.0, 1.122;
-        ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t));
+        ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
 
         // Left gripper.
         Eigen::Matrix3d leftRot;
@@ -253,8 +274,8 @@ Prim5Step * Prim5HangStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d rightPos;
         rightPos << 0.20, -(ctl.prim5->get_distance()/2), 1.0;
         //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
         return new Prim5InitPoseStep;
     }

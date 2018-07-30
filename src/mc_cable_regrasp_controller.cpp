@@ -109,6 +109,16 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     comTask.reset(new mc_tasks::CoMTask(robots(), robots().robotIndex()));
     solver().addTask(comTask);
 
+    // Start the global FSM.
+    step = new InitStep();
+    // Create primitive object.
+    prim1 = new Primitive1(1, "Primivive 1", *this); 
+    prim2 = new Primitive2(2, "Primivive 2", *this); 
+    prim3 = new Primitive3(3, "Primivive 3", *this); 
+    prim4 = new Primitive4(4, "Primivive 4", *this); 
+    prim5 = new Primitive5(5, "Primivive 5", *this); 
+    prim6 = new Primitive6(6, "Primivive 6", *this); 
+
     //
     #ifdef MC_RTC_HAS_ROS
     if(mc_rtc::ROSBridge::get_node_handle())
@@ -175,8 +185,24 @@ const sva::PTransformd & MCCableRegraspController::X_0_marker(const std::string 
 }
 
 void MCCableRegraspController::reset(const ControllerResetData & reset_data)
-{
+{    
+    // 
+    MCController::reset(reset_data);
+    qpsolver->setContacts({
+        mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
+        mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
+        //mc_rbdyn::Contact(robots(), "Butthock", "AllGround")
+    });
+
+    lh2Task->reset();
+    rh2Task->reset();
+    chestTask->reset();
+    comTask->reset();
+
     // for simulation
+    if(initial_reset)
+    {
+      initial_reset = false;
       if(FLAG_SIMULATION_VREP)
       {
         auto shapes_c = config_("simulation")("markers");
@@ -227,29 +253,8 @@ void MCCableRegraspController::reset(const ControllerResetData & reset_data)
         m_ros_spinner_ = std::thread{[this](){ this->ros_spinner(); }};
         l_shape_sub_ = m_nh_->subscribe("/whycon_lshape/whycon_lshape", 1000, &MCCableRegraspController::lShapeCallback, this);
       }
+    } // initial reset
 
-    // 
-    MCController::reset(reset_data);
-    qpsolver->setContacts({
-        mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
-        mc_rbdyn::Contact(robots(), 0, 3, "RFullSole", "AllGround"),
-        //mc_rbdyn::Contact(robots(), "Butthock", "AllGround")
-    });
-
-    lh2Task->reset();
-    rh2Task->reset();
-    chestTask->reset();
-    comTask->reset();
-
-    // Start the global FSM.
-    step = new InitStep();
-    // Create primitive object.
-    prim1 = new Primitive1(1, "Primivive 1", *this); 
-    prim2 = new Primitive2(2, "Primivive 2", *this); 
-    prim3 = new Primitive3(3, "Primivive 3", *this); 
-    prim4 = new Primitive4(4, "Primivive 4", *this); 
-    prim5 = new Primitive5(5, "Primivive 5", *this); 
-    prim6 = new Primitive6(6, "Primivive 6", *this); 
 }
 
 bool MCCableRegraspController::run()

@@ -59,12 +59,19 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim6HangStep: __update()." << std::endl;
 
+    // 
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
     // Cheset task.
     Eigen::Matrix3d rot;
     rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
     Eigen::Vector3d t;     
     t << 0.0320, 0.0, 1.122;
-    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t));
+    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
 
     // Left gripper.
     Eigen::Matrix3d leftRot;
@@ -79,8 +86,8 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     Eigen::Vector3d rightPos;
     rightPos << 0.20, -(ctl.prim6->get_distance()/2), 1.0;
     //
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
     return new Prim6ToPrePosStep;
 }
@@ -102,6 +109,14 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive6: Prim6ToPrePoseStep: __update()." << std::endl;
 
+    // 
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
+    //
     double diffLeft;
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
@@ -121,8 +136,8 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d rightPos;
         rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.2;
         //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
         return new Prim6InsStep;
     }
@@ -152,6 +167,13 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffRight = ctl.rh2Task->eval().norm();
     if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
+        // 
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
@@ -165,8 +187,8 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d rightPos;
         rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
         //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
         return new Prim6InitPoseStep;
     }

@@ -90,10 +90,17 @@ void Prim2SpreadStep::__init(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive2: Prim2SpreadStep: __init()." << std::endl;
 
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+    //
     ctl.prim2->set_stepByStep(stepByStep_);
     // left gripper
     sva::PTransformd leftGripper;
-    leftGripper = ctl.lh2Task->get_ef_pose();
+    leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
     Eigen::Vector3d startPosLeft;
     startPosLeft = leftGripper.translation();
     Eigen::Matrix3d startRotLeft;
@@ -107,7 +114,7 @@ void Prim2SpreadStep::__init(MCCableRegraspController & ctl)
     leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
     // right gripper
     sva::PTransformd rightGripper;
-    rightGripper = ctl.rh2Task->get_ef_pose();
+    rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
     Eigen::Vector3d startPosRight;
     startPosRight = rightGripper.translation();
     Eigen::Matrix3d startRotRight;
@@ -138,6 +145,12 @@ Prim2Step * Prim2SpreadStep::__update(MCCableRegraspController & ctl)
     }
     else
     {
+        //
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
         // left gripper
         tt = leftHandLinearTraj->pop();
         Eigen::Vector3d leftPos;
@@ -150,7 +163,7 @@ Prim2Step * Prim2SpreadStep::__update(MCCableRegraspController & ctl)
         //ctl.lh2Task->positionTask->refAccel(leftAccel)
         Eigen::Matrix3d leftRot;
         leftRot = std::get<3>(tt);
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftPos) * X_0_mid);
         // right gripper
         tt = rightHandLinearTraj->pop();
         Eigen::Vector3d rightPos;
@@ -163,7 +176,7 @@ Prim2Step * Prim2SpreadStep::__update(MCCableRegraspController & ctl)
         //ctl.rh2Task->positionTask->refAccel(rightAccel);
         Eigen::Matrix3d rightRot;
         rightRot = std::get<3>(tt);
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, rightPos));
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, rightPos) * X_0_mid);
         //
         cntRun++;
         return this;
