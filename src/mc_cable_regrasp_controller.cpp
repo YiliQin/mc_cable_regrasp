@@ -13,6 +13,7 @@
 
 #ifdef MC_RTC_HAS_ROS
 #include <ros/ros.h>
+#include <std_msgs/Float64.h>
 #include <tf2_ros/transform_broadcaster.h>
 #endif
 
@@ -42,17 +43,23 @@ namespace
 namespace mc_control
 {
 
-MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::RobotModule> robot_module, double dt)
+MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::RobotModule> robot_module, double dt, const mc_rtc::Configuration & config)
 : MCController({robot_module,
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("bar")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("wall-holder")),
         mc_rbdyn::RobotLoader::get_robot_module("env", std::string(mc_rtc::MC_ENV_DESCRIPTION_PATH), std::string("ground"))},
         dt),
+        config_(config),
+        m_nh_(mc_rtc::ROSBridge::get_node_handle()),
         tf_caster(0), seq(0), barCollisionConstraint(robots(), 0, 1, solver().dt())
 {
     // modify the model position and orientation error in Choreonoid
     //robots().robot(1).posW({sva::RotZ(M_PI)*sva::RotX(M_PI/2), {-0.27, 0., 2*0.54 + 0.01}});
     //robots().robot(2).posW({sva::RotZ(M_PI), {0.45, 0., 0.75}});
+
+    // for simulation
+    FLAG_SIMULATION_VREP = config("Simulation");
+    camera_body = static_cast<std::string>(config("camera_body"));
 
     qpsolver->addConstraintSet(contactConstraint);
     qpsolver->addConstraintSet(dynamicsConstraint);
@@ -102,6 +109,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     comTask.reset(new mc_tasks::CoMTask(robots(), robots().robotIndex()));
     solver().addTask(comTask);
 
+    //
     #ifdef MC_RTC_HAS_ROS
     if(mc_rtc::ROSBridge::get_node_handle())
     {
@@ -112,8 +120,115 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     LOG_SUCCESS("MCCableRegraspController init done")
 }
 
+void MCCableRegraspController::ros_spinner()
+{
+  ros::Rate rt(30);
+  while(ros::ok() && active_)
+  {
+    ros::spinOnce();
+    rt.sleep();
+  }
+}
+
+void MCCableRegraspController::lShapeCallback(const whycon_lshape::WhyConLShapeMsg & msg)
+{
+  std::lock_guard<std::mutex> lock(lshapes_mut_);
+  Eigen::Matrix3d camera_R_image;
+  camera_R_image = sva::RotY(-M_PI/2)*sva::RotZ(M_PI/2);
+  const sva::PTransformd& X_0_head = getCameraPose();
+  for(const auto & s : msg.shapes)
+  {
+    Eigen::Vector3d pos = { s.pose.position.x,
+                            s.pose.position.y,
+                            s.pose.position.z };
+    Eigen::Quaterniond q = { s.pose.orientation.w,
+                             s.pose.orientation.x,
+                             s.pose.orientation.y,
+                             s.pose.orientation.z };
+    if(!lshapes.count(s.name))
+    {
+      std::string name = s.name;
+      gui()->addElement({"LShapes markers"},
+                        mc_rtc::gui::Transform(s.name,
+                                             [this,name]() { return X_0_marker(name); },
+                                             [](const sva::PTransformd&){}));
+    }
+    lshapes[s.name].update({q.toRotationMatrix() * camera_R_image.transpose(), camera_R_image * pos}, X_0_head);
+  }
+}
+
+const sva::PTransformd & MCCableRegraspController::getCameraPose() const
+{
+  return robot().bodyPosW(camera_body);
+}
+
+const sva::PTransformd & MCCableRegraspController::X_camera_marker(const std::string & name) const
+{
+  std::lock_guard<std::mutex> lock(lshapes_mut_);
+  return lshapes.at(name).pos;
+}
+
+const sva::PTransformd & MCCableRegraspController::X_0_marker(const std::string & name) const
+{
+  std::lock_guard<std::mutex> lock(lshapes_mut_);
+  return lshapes.at(name).world_pos;
+}
+
 void MCCableRegraspController::reset(const ControllerResetData & reset_data)
 {
+    // for simulation
+      if(FLAG_SIMULATION_VREP)
+      {
+        auto shapes_c = config_("simulation")("markers");
+        for(auto k : shapes_c.keys())
+        {
+          lshapes[k].update(shapes_c(k)("pos"), sva::PTransformd::Identity());
+          gui()->addElement({"LShapes markers"},
+                            mc_rtc::gui::Transform(k,
+                                                   [this,k](){ return X_0_marker(k); },
+                                                   [](const sva::PTransformd&){}));
+        }
+        lshapes_simulation_th_ = std::thread([this,shapes_c]()
+        {
+          ros::Rate rt(30);
+          while(ros::ok() && active_)
+          {
+            {
+              std::lock_guard<std::mutex> lock(lshapes_mut_);
+              const auto & X_0_camera = getCameraPose();
+              for(auto k : shapes_c.keys())
+              {
+                sva::PTransformd X_camera_marker;
+                if(shapes_c(k).has("relative"))
+                {
+                  const auto & X_0_s = robot().surface(shapes_c(k)("relative")).X_0_s(robot());
+                  sva::PTransformd X_s_marker = shapes_c(k)("pos");
+                  auto X_0_marker = X_s_marker * X_0_s;
+                  X_camera_marker = X_0_marker * (X_0_camera.inv());
+                }
+                else
+                {
+                  sva::PTransformd X_0_marker = shapes_c(k)("pos");
+                  X_camera_marker = X_0_marker * (X_0_camera.inv());
+                }
+                lshapes[k].update(X_camera_marker, X_0_camera);
+              }
+            }
+            rt.sleep();
+          }
+        });
+      }
+      else
+      {
+        if(!m_nh_)
+        {
+          LOG_ERROR_AND_THROW(std::runtime_error, "This controller does not work withtout ROS")
+        }
+        m_ros_spinner_ = std::thread{[this](){ this->ros_spinner(); }};
+        l_shape_sub_ = m_nh_->subscribe("/whycon_lshape/whycon_lshape", 1000, &MCCableRegraspController::lShapeCallback, this);
+      }
+
+    // 
     MCController::reset(reset_data);
     qpsolver->setContacts({
         mc_rbdyn::Contact(robots(), 0, 3, "LFullSole", "AllGround"),
@@ -186,6 +301,32 @@ bool MCCableRegraspController::run()
             tf_caster->sendTransform(msg);
         }
         #endif
+
+    // for simulation
+    if(!FLAG_SIMULATION_VREP)
+    {
+        for(auto & ls : lshapes)
+        {
+        ls.second.tick(timeStep);
+        }
+    }
+    if(FLAG_SIMULATION_VREP)
+    {
+    // transform from Vrep force sensor reference system to solver force sensor reference system
+    wrenches["LeftHandForceSensor"] = this->robot().forceSensor("LeftHandForceSensor").wrench();
+    wrenches["RightHandForceSensor"] = this->robot().forceSensor("RightHandForceSensor").wrench();
+    sva::ForceVecd wrench_inter = wrenches.at("LeftHandForceSensor");
+    wrenches.at("LeftHandForceSensor").couple() << wrench_inter.couple()[2],wrench_inter.couple()[1],-wrench_inter.couple()[0];
+    wrenches.at("LeftHandForceSensor").force() << wrench_inter.force()[2],wrench_inter.force()[1],-wrench_inter.force()[0];
+    wrench_inter = wrenches.at("RightHandForceSensor");
+    wrenches.at("RightHandForceSensor").couple() << wrench_inter.couple()[2],wrench_inter.couple()[1],-wrench_inter.couple()[0];
+    wrenches.at("RightHandForceSensor").force() << wrench_inter.force()[2],wrench_inter.force()[1],-wrench_inter.force()[0];
+    }
+    else
+    {
+    wrenches["LeftHandForceSensor"] = this->robot().forceSensor("LeftHandForceSensor").removeGravity(this->robot());
+    wrenches["RightHandForceSensor"] = this->robot().forceSensor("RightHandForceSensor").removeGravity(this->robot());
+    }
 
     // Put run() here.
     global_fsm_run();
@@ -366,4 +507,4 @@ bool MCCableRegraspController::read_write_msg(std::string & msg, std::string & o
 
 }
 
-SIMPLE_CONTROLLER_CONSTRUCTOR("CableRegrasp", mc_control::MCCableRegraspController)
+CONTROLLER_CONSTRUCTOR("CableRegrasp", mc_control::MCCableRegraspController)
