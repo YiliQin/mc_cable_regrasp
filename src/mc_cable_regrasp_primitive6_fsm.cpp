@@ -89,7 +89,9 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
-    return new Prim6ToPrePosStep;
+    //return new Prim6ToPrePosStep;
+    // for 20180731 test
+    return new Prim6InitPoseStep;
 }
 
 /////////////////////////////////////////////////////////////
