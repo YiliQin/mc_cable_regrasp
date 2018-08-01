@@ -445,6 +445,15 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         gripper->setTargetQ({-0.7});
         return true;
     }
+    else if (token == "GetMarkerPos")
+    {
+        marker1_pos = lshapes["wall_0"].world_pos;
+        LOG_SUCCESS("Marker_5cm position:");
+        LOG_SUCCESS(marker1_pos.translation());
+        marker2_pos = lshapes["rail"].world_pos;
+        LOG_SUCCESS("Marker_8cm position:");
+        LOG_SUCCESS(marker2_pos.translation());
+    }
     else
     {
         LOG_ERROR("BCISelfInteract controller cannot handle this token: " << token)
