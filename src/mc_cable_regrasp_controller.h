@@ -63,6 +63,9 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         bool FLAG_SIMULATION_VREP = true;
         // for test
         bool cmdContinue = false;
+        bool prim6ContinueS1 = false; 
+        bool prim6ContinueS2 = false;
+        bool prim6ContinueS3 = false;
         // True for the initial reset
         bool initial_reset = true;
 

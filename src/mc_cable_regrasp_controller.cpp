@@ -421,6 +421,21 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         cmdContinue = true;
         return true;
     }
+    else if (token == "Prim6ContinueS1")
+    {
+        prim6ContinueS1 = true;
+        return true;
+    }
+    else if (token == "Prim6ContinueS2")
+    {
+        prim6ContinueS2 = true; 
+        return true;
+    }
+    else if (token == "Prim6ContinueS3")
+    {
+        prim6ContinueS3 = true;
+        return true;
+    }
     else if(token == "OpenRightGripper")
     {
         auto gripper = grippers["r_gripper"].get();
@@ -447,7 +462,21 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     }
     else if (token == "GetMarkerPos")
     {
-        marker1_pos = lshapes["wall_0"].world_pos;
+        //// for experiment
+        //marker1_pos = lshapes["wall_0"].world_pos;
+        //marker2_pos = lshapes["rail"].world_pos;
+
+        // for simulation
+        auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
+        auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+
+        marker1_pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+        marker2_pos = lshapes["rail"].world_pos * X_0_mid.inv();
+
+        // print out message
         LOG_SUCCESS("Marker_5cm position:");
         LOG_SUCCESS(marker1_pos.translation());
         marker2_pos = lshapes["rail"].world_pos;
