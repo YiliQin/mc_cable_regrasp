@@ -5,6 +5,7 @@
 #include "mc_cable_regrasp_primitive4.h"
 #include "mc_cable_regrasp_primitive5.h"
 #include "mc_cable_regrasp_primitive6.h"
+#include "mc_cable_regrasp_primitive11.h"
 
 namespace mc_control
 {
@@ -83,19 +84,35 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 
     PrimInfo primInfo;
 
+    //// Test data 1
+    //primInfo.name = "Primitive6";
+    //primInfo.primNum = 6;
+    //primInfo.parNum = 1;
+    //primInfo.par1 = 0.4;
+    //ctl.quePrim.push(primInfo);     
+
     // Test data 1
-    primInfo.name = "Primitive6";
-    primInfo.primNum = 6;
+    primInfo.name = "Primitive5";
+    primInfo.primNum = 5;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.4;
+    primInfo.par1 = 0.6;
     ctl.quePrim.push(primInfo);     
 
-    //// Test data 1
-    //primInfo.name = "Primitive5";
-    //primInfo.primNum = 5;
-    //primInfo.parNum = 1;
-    //primInfo.par1 = 0.6;
-    //ctl.quePrim.push(primInfo);     
+    // Test data 2
+    primInfo.name = "Primitive11";
+    primInfo.primNum = 11;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.3;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 3
+    primInfo.name = "Primitive11";
+    primInfo.primNum = 11;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.3;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
 
     //// Test data 2
     //primInfo.name = "Primitive1";
@@ -242,6 +259,11 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             ctl.prim6->reset();
             ctl.prim6->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
+        case 11:
+            LOG_SUCCESS("Execuating Primitive11.");
+            ctl.prim11->reset();
+            ctl.prim11->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
         default:
             break;
     }
@@ -321,6 +343,18 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             {
                 ctl.primType = 0;
                 ctl.prim6->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 11:
+            ctl.prim11->prim_fsm_run(ctl);
+            if (ctl.prim11->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim11->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
