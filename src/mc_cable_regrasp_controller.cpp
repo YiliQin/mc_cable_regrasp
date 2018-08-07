@@ -416,6 +416,14 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         set_joint_pos("HEAD_JOINT0", pan);
         set_joint_pos("HEAD_JOINT1", tilt); 
     }
+    else if(token == "MoveChest")
+    {
+        Eigen::Matrix3d rot;
+        ss >> rot;
+        Eigen::Vector3d t;     
+        ss >> t;
+        chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t));
+    }
     else if(token == "Continue")
     {
         cmdContinue = true;
@@ -462,19 +470,19 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     }
     else if (token == "GetMarkerPos")
     {
-        //// for experiment
-        //marker1_pos = lshapes["wall_0"].world_pos;
-        //marker2_pos = lshapes["rail"].world_pos;
+        // for experiment
+        marker1_pos = lshapes["wall_0"].world_pos;
+        marker2_pos = lshapes["rail"].world_pos;
 
-        // for simulation
-        auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
-        auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
-        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
-        X_lf_rf.translation() = X_lf_rf.translation() / 2;
-        auto X_0_mid = X_lf_rf * X_0_lf;
+        //// for simulation
+        //auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
+        //auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
+        //auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        //X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        //auto X_0_mid = X_lf_rf * X_0_lf;
 
-        marker1_pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
-        marker2_pos = lshapes["rail"].world_pos * X_0_mid.inv();
+        //marker1_pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+        //marker2_pos = lshapes["rail"].world_pos * X_0_mid.inv();
 
         // print out message
         LOG_SUCCESS("Marker_5cm position:");
