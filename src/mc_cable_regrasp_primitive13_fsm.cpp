@@ -1,0 +1,276 @@
+#include "mc_cable_regrasp_primitive13_fsm.h"
+#include "mc_cable_regrasp_primitive13.h"
+
+namespace mc_control
+{
+
+Prim13Step::Prim13Step(const std::string & name)
+    : name(name)
+{
+    //std::cout << "Prim13Step Constructed." << std::endl;
+}
+
+Prim13Step * Prim13Step::update(MCCableRegraspController & ctl)
+{
+    if(first_call)
+    {
+        __init(ctl);
+        first_call = false;
+        return this;
+    }
+
+    return __update(ctl);
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Initialization Step
+/////////////////////////////////////////////////////////////
+
+void Prim13InitStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13InitSetp: __init()."<< std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13InitStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13InitStep: __update()." << std::endl;
+
+    return new Prim13PreGraspStep;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Prepare Grasp Step
+/////////////////////////////////////////////////////////////
+
+void Prim13PreGraspStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13PreGraspStep: __init()." << std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13PreGraspStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13PreGraspStep: __update()." << std::endl;
+
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
+    //// move chest
+    //Eigen::Matrix3d rot;
+    //rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+    //Eigen::Vector3d t;     
+    //t << 0.0320, 0.0, 1.0;
+    //ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
+    
+    //// Left gripper.
+    //Eigen::Matrix3d leftRot;
+    //// rotz(-90)
+    //leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+    //Eigen::Vector3d leftPos;
+    //leftPos << 0.3, ctl.prim13->get_distance()/2, 1.0;
+
+    // Right gripper.
+    Eigen::Matrix3d rightRot;
+    // rotz(90)
+    rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+    Eigen::Vector3d rightPos;
+    rightPos << 0.3, -(ctl.prim13->get_distance()/2), 1.0;
+    //
+    //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
+
+    return new Prim13OpenGripperStep;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Open Gripper Step
+/////////////////////////////////////////////////////////////
+
+void Prim13OpenGripperStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13OpenGripperStep: __init()." << std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13OpenGripperStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13OpenGripperStep: __update()." << std::endl;
+
+    //double diffLeft;
+    //diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if (diffRight < 1e-2)
+    {
+        static bool opened = false;
+        if (opened == false)
+        {
+            opened = true;
+            //// Open left gripper.
+            //auto gripper = ctl.grippers["l_gripper"].get();
+            //gripper->setTargetQ({0.5});
+
+            // Open right gripper.        
+            auto gripper = ctl.grippers["r_gripper"].get();
+            gripper->setTargetQ({0.5});
+        }
+        static int wait = 0;
+        wait++;
+        if (wait == 500)
+        {
+            wait = 0;
+            opened = false;  
+            return new Prim13GraspStep;
+        }
+    }
+    return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Grasp Step
+/////////////////////////////////////////////////////////////
+
+void Prim13GraspStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13GraspStep: __init()." << std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13GraspStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13GraspStep: __update()." << std::endl;
+   
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
+    //// Left gripper.
+    //Eigen::Matrix3d leftRot;
+    //// rotz(-90)
+    //leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+    //Eigen::Vector3d leftPos;
+    //leftPos << 0.3, ctl.prim13->get_distance()/2, 0.9;
+
+    // Right gripper.
+    Eigen::Matrix3d rightRot;
+    // rotz(90)
+    rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+    Eigen::Vector3d rightPos;
+    rightPos << 0.3, -(ctl.prim13->get_distance()/2), 0.9;
+    //
+    //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
+
+    return new Prim13CloseGripperStep;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Close Gripper Step
+/////////////////////////////////////////////////////////////
+
+void Prim13CloseGripperStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13CloseGripperStep: __init()." << std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13CloseGripperStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13CloseGripperStep: __update()." << std::endl;
+
+    //double diffLeft;
+    //diffLeft = ctl.lh2Task->eval().norm();
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if (diffRight < 1e-2)
+    {
+        static bool closed = false;
+        if(closed == false)
+        {
+          closed = true;
+          // Close left gripper.
+          auto gripper = ctl.grippers["l_gripper"].get();
+          gripper->setTargetQ({-0.5});
+          // Close right gripper.        
+          gripper = ctl.grippers["r_gripper"].get();
+          gripper->setTargetQ({-0.5});
+        }
+        static int wait = 0;
+        if(wait++ == 500)
+        {
+          wait = 0;
+          closed = false;
+          return new Prim13InitPoseStep;
+        }
+    }
+    return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 Initial Pose Step
+/////////////////////////////////////////////////////////////
+
+void Prim13InitPoseStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13InitPoseStep: __init()." << std::endl;
+
+    ctl.prim13->set_stepByStep(stepByStep_);
+}
+
+Prim13Step * Prim13InitPoseStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13InitPoseStep: __update()." << std::endl;
+
+    double diff;
+    diff = ctl.rh2Task->eval().norm();
+    if (diff < 1e-2)
+    {
+        return new Prim13EndStep;
+    }
+    return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive13 End Step
+/////////////////////////////////////////////////////////////
+
+void Prim13EndStep::__init(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13EndStep: init." << std::endl;
+}
+
+Prim13Step * Prim13EndStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive13: Prim13EndStep: update." << std::endl;
+
+    return nullptr;
+}
+
+}
