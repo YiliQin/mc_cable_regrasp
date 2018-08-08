@@ -9,41 +9,41 @@
 namespace mc_control
 {
 
-struct Prim11Step
+struct Prim12Step
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     public:
-        Prim11Step(const std::string & name);
-        virtual ~Prim11Step() {};
-        Prim11Step * update(MCCableRegraspController & ctl);
+        Prim12Step(const std::string & name);
+        virtual ~Prim12Step() {};
+        Prim12Step * update(MCCableRegraspController & ctl);
     protected:
         virtual void __init(MCCableRegraspController & ctl) = 0;
-        virtual Prim11Step * __update(MCCableRegraspController & ctl) = 0;
+        virtual Prim12Step * __update(MCCableRegraspController & ctl) = 0;
     public:
         bool first_call = true;
         std::string name;
 };
 
 #define CREATE_STEP(NAME, DESC, MEMBERS)\
-struct NAME : public Prim11Step\
+struct NAME : public Prim12Step\
 {\
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW\
-    NAME() : Prim11Step(DESC) {}\
+    NAME() : Prim12Step(DESC) {}\
     virtual void __init(MCCableRegraspController & ctl) override;\
-    virtual Prim11Step * __update(MCCableRegraspController & ctl) override;\
+    virtual Prim12Step * __update(MCCableRegraspController & ctl) override;\
     MEMBERS\
 };
 
-CREATE_STEP(Prim11InitStep, "Primitive11 Initialization Step",
+CREATE_STEP(Prim12InitStep, "Primitive12 Initialization Step",
                 bool stepByStep_ = true;
                 )
 
-CREATE_STEP(Prim11OpenGripperStep, "Primitive11 Open Gripper Step",
+CREATE_STEP(Prim12OpenGripperStep, "Primitive12 Open Gripper Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11SpreadStep, "Primitive11 Spread Step",
+CREATE_STEP(Prim12SpreadStep, "Primitive12 Spread Step",
                 bool stepByStep_ = true;
                 LinearTrajectory * leftHandLinearTraj;
                 LinearTrajectory * rightHandLinearTraj;
@@ -51,12 +51,12 @@ CREATE_STEP(Prim11SpreadStep, "Primitive11 Spread Step",
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11CloseGripperStep, "Primitive11 Close Gripper Step",
+CREATE_STEP(Prim12CloseGripperStep, "Primitive12 Close Gripper Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11BackStep, "Primitive11 Back Step",
+CREATE_STEP(Prim12BackStep, "Primitive12 Back Step",
                 bool stepByStep_ = true;
                 LinearTrajectory * leftHandLinearTraj;
                 LinearTrajectory * rightHandLinearTraj;
@@ -64,27 +64,27 @@ CREATE_STEP(Prim11BackStep, "Primitive11 Back Step",
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11OpenLeftStep, "Primitive11 Open Left Gripper Step",
+CREATE_STEP(Prim12OpenRightStep, "Primitive12 Open Right Gripper Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11ReleLeftStep, "Primitive11 Release Left Gripper Step",
+CREATE_STEP(Prim12ReleRightStep, "Primitive12 Release Right Gripper Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11LeftBackStep, "Primitive11 Left Gripper Back Step",
+CREATE_STEP(Prim12RightBackStep, "Primitive12 Right Gripper Back Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11InitPoseStep, "Primitive11 Initial Pose Step",
+CREATE_STEP(Prim12InitPoseStep, "Primitive12 Initial Pose Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11EndStep, "Primitive11 End Step",
+CREATE_STEP(Prim12EndStep, "Primitive12 End Step",
                 )
 
 #undef CREATE_STEP

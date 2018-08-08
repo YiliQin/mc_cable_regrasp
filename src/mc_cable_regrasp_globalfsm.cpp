@@ -6,6 +6,7 @@
 #include "mc_cable_regrasp_primitive5.h"
 #include "mc_cable_regrasp_primitive6.h"
 #include "mc_cable_regrasp_primitive11.h"
+#include "mc_cable_regrasp_primitive12.h"
 
 namespace mc_control
 {
@@ -99,16 +100,8 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     ctl.quePrim.push(primInfo);     
 
     // Test data 2
-    primInfo.name = "Primitive11";
-    primInfo.primNum = 11;
-    primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
-    primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo);     
-
-    // Test data 3
-    primInfo.name = "Primitive11";
-    primInfo.primNum = 11;
+    primInfo.name = "Primitive12";
+    primInfo.primNum = 12;
     primInfo.parNum = 1;
     primInfo.par1 = 0.3;
     primInfo.par2 = 0.0;
@@ -264,6 +257,11 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             ctl.prim11->reset();
             ctl.prim11->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
+        case 12:
+            LOG_SUCCESS("Execuating Primitive12.");
+            ctl.prim12->reset();
+            ctl.prim12->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
         default:
             break;
     }
@@ -355,6 +353,18 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             {
                 ctl.primType = 0;
                 ctl.prim11->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 12:
+            ctl.prim12->prim_fsm_run(ctl);
+            if (ctl.prim12->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim12->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
