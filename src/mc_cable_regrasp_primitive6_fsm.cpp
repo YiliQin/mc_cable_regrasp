@@ -105,7 +105,7 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
 void Prim6ToPrePosStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive6: Prim6OpenGripperStep: __init()." << std::endl;
+    //std::cout << "Primitive6: Prim6OpenGripperStep: __init()." << std::endl;
 
     ctl.prim6->set_stepByStep(stepByStep_);
 }
@@ -131,7 +131,7 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     {
         // marker offset
         Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -0.155;
+        markerOffset << 0, 0, -(0.155 + 0.025);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
         gripperOffset << -0.02, 0, 0.15;
@@ -194,7 +194,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
 
         // marker offset
         Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -0.155;
+        markerOffset << 0, 0, -(0.155 + 0.025);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
         gripperOffset << -0.02, 0, 0.15;
