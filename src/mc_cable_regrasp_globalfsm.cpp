@@ -8,6 +8,7 @@
 #include "mc_cable_regrasp_primitive11.h"
 #include "mc_cable_regrasp_primitive12.h"
 #include "mc_cable_regrasp_primitive13.h"
+#include "mc_cable_regrasp_primitive14.h"
 
 namespace mc_control
 {
@@ -276,6 +277,11 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             ctl.prim13->reset();
             ctl.prim13->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
+        case 14:
+            LOG_SUCCESS("Execuating Primitive14.");
+            ctl.prim14->reset();
+            ctl.prim14->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
         default:
             break;
     }
@@ -391,6 +397,18 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             {
                 ctl.primType = 0;
                 ctl.prim13->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 14:
+            ctl.prim14->prim_fsm_run(ctl);
+            if (ctl.prim14->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim14->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else

@@ -212,10 +212,10 @@ Prim13Step * Prim13CloseGripperStep::__update(MCCableRegraspController & ctl)
         {
           closed = true;
           // Close left gripper.
-          auto gripper = ctl.grippers["l_gripper"].get();
-          gripper->setTargetQ({-0.5});
+          //auto gripper = ctl.grippers["l_gripper"].get();
+          //gripper->setTargetQ({-0.5});
           // Close right gripper.        
-          gripper = ctl.grippers["r_gripper"].get();
+          auto gripper = ctl.grippers["r_gripper"].get();
           gripper->setTargetQ({-0.5});
         }
         static int wait = 0;
@@ -246,9 +246,9 @@ Prim13Step * Prim13InitPoseStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive13: Prim13InitPoseStep: __update()." << std::endl;
 
-    double diff;
-    diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if (diffRight < 1e-2)
     {
         return new Prim13EndStep;
     }

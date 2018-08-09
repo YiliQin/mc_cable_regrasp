@@ -9,6 +9,7 @@
 #include "mc_cable_regrasp_primitive11.h"
 #include "mc_cable_regrasp_primitive12.h"
 #include "mc_cable_regrasp_primitive13.h"
+#include "mc_cable_regrasp_primitive14.h"
 
 
 #include <mc_rtc/logging.h>
@@ -125,6 +126,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     prim11 = new Primitive11(11, "Primitive 11", *this);
     prim12 = new Primitive12(12, "Primitive 12", *this);
     prim13 = new Primitive13(13, "Primitive 13", *this);
+    prim14 = new Primitive14(14, "Primitive 14", *this);
 
     //
     #ifdef MC_RTC_HAS_ROS
