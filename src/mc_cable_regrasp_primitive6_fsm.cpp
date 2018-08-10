@@ -74,7 +74,8 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
     Eigen::Vector3d t;     
     //t << 0.0320, 0.0, 1.122;
-    t << -0.0320, 0.0, 1.0;
+    //t << -0.0320, 0.0, 1.0;
+    t << -0.05, 0.0, 1.122;
     ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
 
     // Left gripper.
@@ -131,10 +132,10 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     {
         // marker offset
         Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -(0.155 + 0.025);
+        markerOffset << 0, 0, -(0.17);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
-        gripperOffset << -0.02, 0, 0.15;
+        gripperOffset << 0, 0, 0.20;
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
@@ -194,16 +195,16 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
 
         // marker offset
         Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -(0.155 + 0.025);
+        markerOffset << 0, 0, -(0.17);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
-        gripperOffset << -0.02, 0, 0.15;
+        gripperOffset << 0, 0, 0.20;
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftOffset;
-        leftOffset << 0, ctl.prim6->get_distance()/2, 0;  
+        leftOffset << 0, ctl.prim6->get_distance()/2, -0.02;  
         Eigen::Vector3d leftPos;
         //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.1;
         leftPos = ctl.marker1_pos.translation() + leftOffset + gripperOffset + markerOffset;
@@ -212,7 +213,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightOffset;
-        rightOffset << 0, -(ctl.prim6->get_distance()/2), 0;
+        rightOffset << 0, -(ctl.prim6->get_distance()/2), -0.02;
         Eigen::Vector3d rightPos;
         //rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
         rightPos = ctl.marker1_pos.translation() + rightOffset + gripperOffset + markerOffset;
