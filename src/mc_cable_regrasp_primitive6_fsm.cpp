@@ -135,7 +135,7 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
         markerOffset << 0, 0, -(0.17);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
-        gripperOffset << 0, 0, 0.20;
+        gripperOffset << 0 + 0.06, 0, 0.20 + 0.06;
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
@@ -198,7 +198,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         markerOffset << 0, 0, -(0.17);
         // gripper offset;
         Eigen::Vector3d gripperOffset;
-        gripperOffset << 0, 0, 0.20;
+        gripperOffset << 0 + 0.06, 0, 0.20 + 0.06;
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
