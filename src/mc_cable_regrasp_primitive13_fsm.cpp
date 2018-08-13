@@ -66,28 +66,13 @@ Prim13Step * Prim13PreGraspStep::__update(MCCableRegraspController & ctl)
     X_lf_rf.translation() = X_lf_rf.translation() / 2;
     auto X_0_mid = X_lf_rf * X_0_lf;
 
-    //// move chest
-    //Eigen::Matrix3d rot;
-    //rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-    //Eigen::Vector3d t;     
-    //t << 0.0320, 0.0, 1.0;
-    //ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
-    
-    //// Left gripper.
-    //Eigen::Matrix3d leftRot;
-    //// rotz(-90)
-    //leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
-    //Eigen::Vector3d leftPos;
-    //leftPos << 0.3, ctl.prim13->get_distance()/2, 1.0;
-
     // Right gripper.
     Eigen::Matrix3d rightRot;
     // rotz(90)
     rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
     Eigen::Vector3d rightPos;
-    rightPos << 0.3, -(ctl.prim13->get_distance()/2), 1.0;
+    rightPos << 0.2, -(ctl.prim13->get_distance()), 1.1;
     //
-    //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
     return new Prim13OpenGripperStep;
@@ -111,7 +96,6 @@ Prim13Step * Prim13OpenGripperStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive13: Prim13OpenGripperStep: __update()." << std::endl;
 
     //double diffLeft;
-    //diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
     if (diffRight < 1e-2)
@@ -120,10 +104,6 @@ Prim13Step * Prim13OpenGripperStep::__update(MCCableRegraspController & ctl)
         if (opened == false)
         {
             opened = true;
-            //// Open left gripper.
-            //auto gripper = ctl.grippers["l_gripper"].get();
-            //gripper->setTargetQ({0.5});
-
             // Open right gripper.        
             auto gripper = ctl.grippers["r_gripper"].get();
             gripper->setTargetQ({0.5});
@@ -164,21 +144,13 @@ Prim13Step * Prim13GraspStep::__update(MCCableRegraspController & ctl)
     X_lf_rf.translation() = X_lf_rf.translation() / 2;
     auto X_0_mid = X_lf_rf * X_0_lf;
 
-    //// Left gripper.
-    //Eigen::Matrix3d leftRot;
-    //// rotz(-90)
-    //leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
-    //Eigen::Vector3d leftPos;
-    //leftPos << 0.3, ctl.prim13->get_distance()/2, 0.9;
-
     // Right gripper.
     Eigen::Matrix3d rightRot;
     // rotz(90)
     rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
     Eigen::Vector3d rightPos;
-    rightPos << 0.3, -(ctl.prim13->get_distance()/2), 0.9;
+    rightPos << 0.2, -(ctl.prim13->get_distance()), 1.0;
     //
-    //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
     return new Prim13CloseGripperStep;
@@ -201,8 +173,6 @@ Prim13Step * Prim13CloseGripperStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive13: Prim13CloseGripperStep: __update()." << std::endl;
 
-    //double diffLeft;
-    //diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
     if (diffRight < 1e-2)
@@ -211,10 +181,6 @@ Prim13Step * Prim13CloseGripperStep::__update(MCCableRegraspController & ctl)
         if(closed == false)
         {
           closed = true;
-          // Close left gripper.
-          //auto gripper = ctl.grippers["l_gripper"].get();
-          //gripper->setTargetQ({-0.5});
-          // Close right gripper.        
           auto gripper = ctl.grippers["r_gripper"].get();
           gripper->setTargetQ({-0.5});
         }

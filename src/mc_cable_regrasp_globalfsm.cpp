@@ -9,6 +9,7 @@
 #include "mc_cable_regrasp_primitive12.h"
 #include "mc_cable_regrasp_primitive13.h"
 #include "mc_cable_regrasp_primitive14.h"
+#include "mc_cable_regrasp_primitive15.h"
 
 namespace mc_control
 {
@@ -94,27 +95,81 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     //primInfo.par1 = 0.4;
     //ctl.quePrim.push(primInfo);     
 
+    // Test data 4
+    primInfo.name = "Primitive15";
+    primInfo.primNum = 15;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);
+
     // Test data 1
     primInfo.name = "Primitive5";
     primInfo.primNum = 5;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.6;
+    primInfo.par1 = 0.4;
     ctl.quePrim.push(primInfo);     
 
     // Test data 2
+    primInfo.name = "Primitiver6";
+    primInfo.primNum = 6;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 3
     primInfo.name = "Primitive12";
     primInfo.primNum = 12;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
+    primInfo.par1 = 0.4;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
-    // Test data 1
+    // Test data 4
+    primInfo.name = "Primitive15";
+    primInfo.primNum = 15;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.3;
+    ctl.quePrim.push(primInfo);
+
+    // Test data 5
     primInfo.name = "Primitive13";
     primInfo.primNum = 13;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.6;
+    primInfo.par1 = 0.2;
     primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 6
+    primInfo.name = "Primitive12";
+    primInfo.primNum = 12;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 7
+    primInfo.name = "Primitive15";
+    primInfo.primNum = 15;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.3;
+    ctl.quePrim.push(primInfo);
+
+    // Test data 8
+    primInfo.name = "Primitive13";
+    primInfo.primNum = 13;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.2;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo); 
+
+    // Test data 1
+    primInfo.name = "Primitiver6";
+    primInfo.primNum = 6;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
     ctl.quePrim.push(primInfo);     
 
     //// Test data 2
@@ -282,6 +337,11 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             ctl.prim14->reset();
             ctl.prim14->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
+        case 15:
+            LOG_SUCCESS("Execuating Primitive15.");
+            ctl.prim15->reset();
+            ctl.prim15->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
         default:
             break;
     }
@@ -409,6 +469,18 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             {
                 ctl.primType = 0;
                 ctl.prim14->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 15:
+            ctl.prim15->prim_fsm_run(ctl);
+            if (ctl.prim15->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim15->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else

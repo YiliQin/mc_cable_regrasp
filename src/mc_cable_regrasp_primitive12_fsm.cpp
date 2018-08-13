@@ -87,7 +87,7 @@ Prim12Step * Prim12OpenGripperStep::__update(MCCableRegraspController &)
 void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
+    //std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
     //
     auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
     auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -192,7 +192,7 @@ Prim12Step * Prim12SpreadStep::__update(MCCableRegraspController & ctl)
 void Prim12CloseGripperStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive12: Prim12CloseGripperStep: __init()." << std::endl;
+    //std::cout << "Primitive12: Prim12CloseGripperStep: __init()." << std::endl;
 
     ctl.prim12->set_stepByStep(stepByStep_);
 }
@@ -237,7 +237,7 @@ Prim12Step * Prim12CloseGripperStep::__update(MCCableRegraspController & ctl)
 void Prim12BackStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive12: Prim12BackStep: __init()." << std::endl;
+    //std::cout << "Primitive12: Prim12BackStep: __init()." << std::endl;
     //
     auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
     auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -342,7 +342,7 @@ Prim12Step * Prim12BackStep::__update(MCCableRegraspController & ctl)
 void Prim12OpenRightStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive12: Prim12OpenRightStep: __init()." << std::endl;
+    //std::cout << "Primitive12: Prim12OpenRightStep: __init()." << std::endl;
 
     ctl.prim12->set_stepByStep(stepByStep_);
 }

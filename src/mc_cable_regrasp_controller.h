@@ -35,6 +35,7 @@ struct Primitive11;
 struct Primitive12;
 struct Primitive13;
 struct Primitive14;
+struct Primitive15;
 
 struct PrimInfo
 {
@@ -65,6 +66,8 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
 
         // FLAGS: set before controller usage
         bool FLAG_SIMULATION_VREP = true;
+        // for interaction with user
+        bool prim15Continue = false;
         // for test
         bool cmdContinue = false;
         bool prim6ContinueS1 = false; 
@@ -85,6 +88,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         Primitive12 * prim12 = nullptr;
         Primitive13 * prim13 = nullptr;
         Primitive14 * prim14 = nullptr;
+        Primitive15 * prim15 = nullptr;
 
         std::queue<PrimInfo> quePrim;
         

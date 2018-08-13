@@ -22,6 +22,8 @@ set(controller_SRC
     mc_cable_regrasp_primitive13_fsm.cpp
     mc_cable_regrasp_primitive14.cpp
     mc_cable_regrasp_primitive14_fsm.cpp
+    mc_cable_regrasp_primitive15.cpp
+    mc_cable_regrasp_primitive15_fsm.cpp
 
     mc_cable_regrasp_linear_trajectory.cpp
 )
@@ -50,6 +52,8 @@ set(controller_HDR
     mc_cable_regrasp_primitive13_fsm.h
     mc_cable_regrasp_primitive14.h
     mc_cable_regrasp_primitive14_fsm.h
+    mc_cable_regrasp_primitive15.h
+    mc_cable_regrasp_primitive15_fsm.h
 
     mc_cable_regrasp_linear_trajectory.h
 )

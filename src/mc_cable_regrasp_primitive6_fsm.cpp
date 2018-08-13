@@ -73,7 +73,8 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     Eigen::Matrix3d rot;
     rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
     Eigen::Vector3d t;     
-    t << 0.0320, 0.0, 1.122;
+    //t << 0.0320, 0.0, 1.122;
+    t << -0.03, 0.0, 1.122;
     ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
 
     // Left gripper.

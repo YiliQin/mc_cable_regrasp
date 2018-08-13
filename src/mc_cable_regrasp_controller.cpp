@@ -10,7 +10,7 @@
 #include "mc_cable_regrasp_primitive12.h"
 #include "mc_cable_regrasp_primitive13.h"
 #include "mc_cable_regrasp_primitive14.h"
-
+#include "mc_cable_regrasp_primitive15.h"
 
 #include <mc_rtc/logging.h>
 #include <mc_rtc/ros.h>
@@ -127,6 +127,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     prim12 = new Primitive12(12, "Primitive 12", *this);
     prim13 = new Primitive13(13, "Primitive 13", *this);
     prim14 = new Primitive14(14, "Primitive 14", *this);
+    prim15 = new Primitive15(15, "Primitive 15", *this);
 
     //
     #ifdef MC_RTC_HAS_ROS
@@ -443,6 +444,11 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     else if (token == "Prim6ContinueS3")
     {
         prim6ContinueS3 = true;
+        return true;
+    }
+    else if(token == "Prim15Continue")
+    {
+        prim15Continue = true;
         return true;
     }
     else if(token == "OpenRightGripper")
