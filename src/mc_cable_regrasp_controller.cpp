@@ -129,6 +129,11 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     prim14 = new Primitive14(14, "Primitive 14", *this);
     prim15 = new Primitive15(15, "Primitive 15", *this);
 
+    // system offset
+    markerOffset << 0.0, 0.0, -0.17;
+    gripperOffset << 0.0, 0.0, 0.20;
+    compenOffset << 0.06, 0.0, 0.02;
+
     //
     #ifdef MC_RTC_HAS_ROS
     if(mc_rtc::ROSBridge::get_node_handle())
@@ -478,8 +483,8 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     else if (token == "GetMarkerPos")
     {
         //// for experiment
-        //marker1_pos = lshapes["wall_0"].world_pos;
-        //marker2_pos = lshapes["rail"].world_pos;
+        //marker1Pos = lshapes["wall_0"].world_pos;
+        //marker2Pos = lshapes["rail"].world_pos;
 
         // for simulation
         auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
@@ -488,15 +493,33 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
 
-        marker1_pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
-        marker2_pos = lshapes["rail"].world_pos * X_0_mid.inv();
+        marker1Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+        marker2Pos = lshapes["rail"].world_pos * X_0_mid.inv();
+
+        // get current marker position
+        Eigen::Vector3d zeroVec;
+        zeroVec << 0.0, 0.0, 0.0;
+        if (marker1Pos.translation() != zeroVec)
+        {
+            curMarkerPos = marker1Pos;
+        }
+        else if (marker2Pos.translation() != zeroVec)
+        {
+            curMarkerPos = marker2Pos;
+        }
+        else
+        {
+            // bug
+            curMarkerPos = curMarkerPos;
+        }
 
         // print out message
         LOG_SUCCESS("Marker_5cm position:");
-        LOG_SUCCESS(marker1_pos.translation());
-        marker2_pos = lshapes["rail"].world_pos;
+        LOG_SUCCESS(marker1Pos.translation());
         LOG_SUCCESS("Marker_8cm position:");
-        LOG_SUCCESS(marker2_pos.translation());
+        LOG_SUCCESS(marker2Pos.translation());
+        LOG_SUCCESS("Current marker position:");
+        LOG_SUCCESS(curMarkerPos.translation());
     }
     else
     {

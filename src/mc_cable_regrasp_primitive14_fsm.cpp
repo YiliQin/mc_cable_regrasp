@@ -66,12 +66,19 @@ Prim14Step * Prim14PreGraspStep::__update(MCCableRegraspController & ctl)
     X_lf_rf.translation() = X_lf_rf.translation() / 2;
     auto X_0_mid = X_lf_rf * X_0_lf;
     
+    // right gripper
+    sva::PTransformd rightGripper;
+    rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
+    Eigen::Vector3d rightPos;
+    rightPos = rightGripper.translation();
+
     // Left gripper.
     Eigen::Matrix3d leftRot;
     // rotz(-90)
     leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
     Eigen::Vector3d leftPos;
-    leftPos << 0.3, ctl.prim14->get_distance()/2, 1.1;
+    //leftPos << 0.3, ctl.prim14->get_distance()/2, 1.1;
+    leftPos << rightPos[0], ctl.prim14->get_distance(), rightPos[2] + 0.2;
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
 
     return new Prim14OpenGripperStep;
@@ -141,12 +148,19 @@ Prim14Step * Prim14GraspStep::__update(MCCableRegraspController & ctl)
     X_lf_rf.translation() = X_lf_rf.translation() / 2;
     auto X_0_mid = X_lf_rf * X_0_lf;
 
+    // right gripper
+    sva::PTransformd rightGripper;
+    rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
+    Eigen::Vector3d rightPos;
+    rightPos = rightGripper.translation();
+
     // Left gripper.
     Eigen::Matrix3d leftRot;
     // rotz(-90)
     leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
     Eigen::Vector3d leftPos;
-    leftPos << 0.3, ctl.prim14->get_distance()/2, 1.0;
+    //leftPos << 0.3, ctl.prim14->get_distance()/2, 1.0;
+    leftPos << rightPos[0], ctl.prim14->get_distance(), rightPos[2];
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
 
     return new Prim14CloseGripperStep;

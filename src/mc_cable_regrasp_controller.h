@@ -136,9 +136,13 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         std::string camera_pan_joint;
         std::string camera_tilt_joint;
         // marker
-        sva::PTransformd marker1_pos;
-        sva::PTransformd marker2_pos;
-
+        sva::PTransformd marker1Pos;
+        sva::PTransformd marker2Pos;
+        sva::PTransformd curMarkerPos;
+        // system offset
+        Eigen::Vector3d markerOffset;
+        Eigen::Vector3d gripperOffset;
+        Eigen::Vector3d compenOffset;
         // Task.
         std::shared_ptr<mc_tasks::EndEffectorTask> lh2Task;
         std::shared_ptr<mc_tasks::EndEffectorTask> rh2Task;

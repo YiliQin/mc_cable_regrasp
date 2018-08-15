@@ -448,6 +448,13 @@ Prim11Step * Prim11LeftBackStep::__update(MCCableRegraspController & ctl)
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
 
+        // close left gripper
+        auto gripper = ctl.grippers["l_gripper"].get();
+        gripper->setTargetQ({-0.7});
+        // close right gripper        
+        gripper = ctl.grippers["r_gripper"].get();
+        gripper->setTargetQ({-0.7});
+
         // left gripper
         Eigen::Matrix3d endRotLeft; 
         //endRotLeft << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
@@ -483,23 +490,24 @@ Prim11Step * Prim11InitPoseStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     if (diffLeft <= 1e-2)
     {    
-        static bool gripper_changed = false;
-        if (gripper_changed == false)
-        {
-            gripper_changed = true;
-            // close left gripper
-            auto gripper = ctl.grippers["l_gripper"].get();
-            gripper->setTargetQ({-0.7});
-            // close right gripper        
-            gripper = ctl.grippers["r_gripper"].get();
-            gripper->setTargetQ({-0.7});
-        }
+        //static bool gripper_changed = false;
+        //if (gripper_changed == false)
+        //{
+            //gripper_changed = true;
+            //// close left gripper
+            //auto gripper = ctl.grippers["l_gripper"].get();
+            //gripper->setTargetQ({-0.7});
+            //// close right gripper        
+            //gripper = ctl.grippers["r_gripper"].get();
+            //gripper->setTargetQ({-0.7});
+        //}
+
         static int wait = 0;
         wait++;
         if (wait == 500) 
         {
             wait = 0;
-            gripper_changed = false;
+            //gripper_changed = false;
             return new Prim11EndStep;
         }
     }

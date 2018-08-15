@@ -40,7 +40,10 @@ Prim6Step * Prim6InitStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive6: Prim6InitStep: __update()." << std::endl;
 
     if (ctl.prim6ContinueS1 == true)
+    {
+        ctl.prim6ContinueS1 = false;
         return new Prim6ToInterPosStep;
+    }
     else
         return this;
 }
@@ -130,13 +133,8 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     diffRight = ctl.rh2Task->eval().norm();
     if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS2 == true))
     {
-        // marker offset
-        Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -(0.17);
-        // gripper offset;
-        Eigen::Vector3d gripperOffset;
-        //gripperOffset << 0 + 0.06, 0, 0.20 + 0.06;
-        gripperOffset << 0 + 0.06, 0, 0.20 + 0.04;
+        ctl.prim6ContinueS2 = false;
+
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
@@ -145,7 +143,7 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
         leftOffset << 0, ctl.prim6->get_distance()/2, 0.10;  
         Eigen::Vector3d leftPos;
         //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.2;
-        leftPos = ctl.marker1_pos.translation() + leftOffset + gripperOffset + markerOffset;
+        leftPos = leftOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
@@ -153,7 +151,7 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d rightOffset;
         rightOffset << 0, -(ctl.prim6->get_distance()/2), 0.10;  
         Eigen::Vector3d rightPos;
-        rightPos = ctl.marker1_pos.translation() + rightOffset + gripperOffset + markerOffset;
+        rightPos = rightOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
@@ -187,6 +185,8 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffRight = ctl.rh2Task->eval().norm();
     if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS3 == true))
     {
+        ctl.prim6ContinueS3 = false;
+
         // 
         auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
         auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -194,31 +194,24 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
 
-        // marker offset
-        Eigen::Vector3d markerOffset;
-        markerOffset << 0, 0, -(0.17);
-        // gripper offset;
-        Eigen::Vector3d gripperOffset;
-        //gripperOffset << 0 + 0.06, 0, 0.20 + 0.06;
-        gripperOffset << 0 + 0.06, 0, 0.20 + 0.04;
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
         Eigen::Vector3d leftOffset;
-        leftOffset << 0, ctl.prim6->get_distance()/2, -0.02;  
+        leftOffset << 0, ctl.prim6->get_distance()/2, 0;  
         Eigen::Vector3d leftPos;
         //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.1;
-        leftPos = ctl.marker1_pos.translation() + leftOffset + gripperOffset + markerOffset;
+        leftPos = leftOffset + ctl.marker1Pos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
         Eigen::Vector3d rightOffset;
-        rightOffset << 0, -(ctl.prim6->get_distance()/2), -0.02;
+        rightOffset << 0, -(ctl.prim6->get_distance()/2), 0;
         Eigen::Vector3d rightPos;
         //rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
-        rightPos = ctl.marker1_pos.translation() + rightOffset + gripperOffset + markerOffset;
+        rightPos = rightOffset + ctl.marker1Pos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
