@@ -64,21 +64,6 @@ CREATE_STEP(Prim11BackStep, "Primitive11 Back Step",
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim11OpenLeftStep, "Primitive11 Open Left Gripper Step",
-                bool stepByStep_ = true;
-                int cntRun = 0;
-                )
-
-CREATE_STEP(Prim11ReleLeftStep, "Primitive11 Release Left Gripper Step",
-                bool stepByStep_ = true;
-                int cntRun = 0;
-                )
-
-CREATE_STEP(Prim11LeftBackStep, "Primitive11 Left Gripper Back Step",
-                bool stepByStep_ = true;
-                int cntRun = 0;
-                )
-
 CREATE_STEP(Prim11InitPoseStep, "Primitive11 Initial Pose Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;

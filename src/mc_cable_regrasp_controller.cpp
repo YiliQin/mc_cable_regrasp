@@ -11,6 +11,7 @@
 #include "mc_cable_regrasp_primitive13.h"
 #include "mc_cable_regrasp_primitive14.h"
 #include "mc_cable_regrasp_primitive15.h"
+#include "mc_cable_regrasp_primitive17.h"
 
 #include <mc_rtc/logging.h>
 #include <mc_rtc/ros.h>
@@ -128,6 +129,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     prim13 = new Primitive13(13, "Primitive 13", *this);
     prim14 = new Primitive14(14, "Primitive 14", *this);
     prim15 = new Primitive15(15, "Primitive 15", *this);
+    prim17 = new Primitive17(17, "Primitive 17", *this);
 
     // system offset
     markerOffset << 0.0, 0.0, -0.17;

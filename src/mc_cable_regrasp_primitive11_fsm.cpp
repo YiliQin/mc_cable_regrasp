@@ -245,20 +245,6 @@ void Prim11BackStep::__init(MCCableRegraspController & ctl)
     auto X_0_mid = X_lf_rf * X_0_lf;
     //
     ctl.prim11->set_stepByStep(stepByStep_);
-    //// left gripper
-    //sva::PTransformd leftGripper;
-    //leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
-    //Eigen::Vector3d startPosLeft;
-    //startPosLeft = leftGripper.translation();
-    //Eigen::Matrix3d startRotLeft;
-    //startRotLeft = leftGripper.rotation();
-    //Eigen::Vector3d leftDiff;
-    //leftDiff << 0.0, ctl.prim11->get_slideLen()/2, 0.0;
-    //Eigen::Vector3d endPosLeft;
-    //endPosLeft = startPosLeft + leftDiff;
-    //Eigen::Matrix3d endRotLeft;
-    //endRotLeft = startRotLeft;
-    //leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
 
     // right gripper
     sva::PTransformd rightGripper;
@@ -289,7 +275,7 @@ Prim11Step * Prim11BackStep::__update(MCCableRegraspController & ctl)
         cntRun = 0;
         //delete leftHandLinearTraj;
         delete rightHandLinearTraj;
-        return new Prim11OpenLeftStep;
+        return new Prim11InitPoseStep;
     }
     else
     {
@@ -299,20 +285,6 @@ Prim11Step * Prim11BackStep::__update(MCCableRegraspController & ctl)
         auto X_lf_rf = X_0_rf * (X_0_lf.inv());
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
-
-        //// left gripper
-        //tt = leftHandLinearTraj->pop();
-        //Eigen::Vector3d leftPos;
-        //leftPos = std::get<0>(tt);
-        //Eigen::Vector3d leftVel;
-        //leftVel = std::get<1>(tt);
-        ////ctl.lh2Task->positionTask->refVel(leftVel);
-        //Eigen::Vector3d leftAccel;
-        //leftAccel = std::get<2>(tt);
-        ////ctl.lh2Task->positionTask->refAccel(leftAccel)
-        //Eigen::Matrix3d leftRot;
-        //leftRot = std::get<3>(tt);
-        //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftPos) * X_0_mid);
 
         // right gripper
         tt = rightHandLinearTraj->pop();
@@ -334,142 +306,6 @@ Prim11Step * Prim11BackStep::__update(MCCableRegraspController & ctl)
 }
 
 /////////////////////////////////////////////////////////////
-//  Primitive11 Open Left Gripper Step
-/////////////////////////////////////////////////////////////
-
-void Prim11OpenLeftStep::__init(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11OpenLeftStep: __init()." << std::endl;
-
-    ctl.prim11->set_stepByStep(stepByStep_);
-}
-
-Prim11Step * Prim11OpenLeftStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11OpenLeftStep: __update()." << std::endl;
-
-    double diffRight;
-    diffRight = ctl.rh2Task->eval().norm();
-    if (diffRight < 1e-2)
-    {
-        static bool gripper_changed = false;
-        if (gripper_changed == false)
-        {
-            gripper_changed = true;
-            // Loose left gripper.
-            auto gripper = ctl.grippers["l_gripper"].get();
-            gripper->setTargetQ({0.5});
-            // Fix right gripper.        
-            gripper = ctl.grippers["r_gripper"].get();
-            gripper->setTargetQ({-0.7});
-        }
-        // Wait.
-        static int wait = 0;
-        wait++;
-        if (wait == 500)
-        {
-            wait = 0;
-            return new Prim11ReleLeftStep;
-        }
-    }
-    return this;
-}
-
-/////////////////////////////////////////////////////////////
-//  Primitive11 Release Left Gripper Step
-/////////////////////////////////////////////////////////////
-
-void Prim11ReleLeftStep::__init(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11ReleLeftStep: __init()." << std::endl;
-    ctl.prim11->set_stepByStep(stepByStep_);
-}
-
-Prim11Step * Prim11ReleLeftStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11ReleLeftStep: __update()." << std::endl;
-
-    //
-    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
-    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
-    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
-    X_lf_rf.translation() = X_lf_rf.translation() / 2;
-    auto X_0_mid = X_lf_rf * X_0_lf;
-
-    // left gripper
-    sva::PTransformd leftGripper;
-    leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
-    Eigen::Vector3d startPosLeft;
-    startPosLeft = leftGripper.translation();
-    Eigen::Matrix3d startRotLeft;
-    startRotLeft = leftGripper.rotation();
-
-    Eigen::Vector3d leftDiff;
-    leftDiff << 0.0, 0.0, 0.15;
-    Eigen::Vector3d endPosLeft;
-    endPosLeft = startPosLeft + leftDiff;
-    Eigen::Matrix3d endRotLeft;
-    endRotLeft = startRotLeft;
-
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(endRotLeft, endPosLeft) * X_0_mid);
-
-    return new Prim11LeftBackStep;
-}
-
-/////////////////////////////////////////////////////////////
-//  Primitive11 Left Gripper Back Step
-/////////////////////////////////////////////////////////////
-
-void Prim11LeftBackStep::__init(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11LeftBackStep: __init()." << std::endl;
-    ctl.prim11->set_stepByStep(stepByStep_);
-}
-
-Prim11Step * Prim11LeftBackStep::__update(MCCableRegraspController & ctl)
-{
-    // For test.
-    //std::cout << "Primitive11: Prim11LeftBackStep: __update()." << std::endl;
-
-    // Wait.
-    double diffLeft;
-    diffLeft = ctl.lh2Task->eval().norm();
-    if (diffLeft <= 1e-2)
-    {    
-        //
-        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
-        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
-        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
-        X_lf_rf.translation() = X_lf_rf.translation() / 2;
-        auto X_0_mid = X_lf_rf * X_0_lf;
-
-        // close left gripper
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({-0.7});
-        // close right gripper        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({-0.7});
-
-        // left gripper
-        Eigen::Matrix3d endRotLeft; 
-        //endRotLeft << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
-        endRotLeft << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-        Eigen::Vector3d endPosLeft;
-        endPosLeft << -0.10, 0.3475, 0.7319; 
-
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(endRotLeft, endPosLeft) * X_0_mid);
-
-        return new Prim11InitPoseStep;
-    }
-    return this;
-}
-
-/////////////////////////////////////////////////////////////
 //  Primitive11 Initial Pose Step
 /////////////////////////////////////////////////////////////
 
@@ -486,28 +322,15 @@ Prim11Step * Prim11InitPoseStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive11: Prim11SecondStep: __update()." << std::endl;
 
     // Wait.
-    double diffLeft;
-    diffLeft = ctl.lh2Task->eval().norm();
-    if (diffLeft <= 1e-2)
+    double diffRight;
+    diffRight = ctl.rh2Task->eval().norm();
+    if (diffRight <= 1e-2)
     {    
-        //static bool gripper_changed = false;
-        //if (gripper_changed == false)
-        //{
-            //gripper_changed = true;
-            //// close left gripper
-            //auto gripper = ctl.grippers["l_gripper"].get();
-            //gripper->setTargetQ({-0.7});
-            //// close right gripper        
-            //gripper = ctl.grippers["r_gripper"].get();
-            //gripper->setTargetQ({-0.7});
-        //}
-
         static int wait = 0;
         wait++;
         if (wait == 500) 
         {
             wait = 0;
-            //gripper_changed = false;
             return new Prim11EndStep;
         }
     }
