@@ -74,8 +74,7 @@ Prim17Step * Prim17OpenLeftStep::__update(MCCableRegraspController &)
         wait = 0;
         return new Prim17ReleLeftStep;
     }
-    else
-        return this;
+    return this;
 }
 
 /////////////////////////////////////////////////////////////
@@ -167,6 +166,7 @@ Prim17Step * Prim17CloseLeftStep::__update(MCCableRegraspController & ctl)
 
     return this;
 }
+
 /////////////////////////////////////////////////////////////
 //  Primitive17 Left Gripper Back Step
 /////////////////////////////////////////////////////////////
@@ -200,7 +200,6 @@ Prim17Step * Prim17LeftBackStep::__update(MCCableRegraspController & ctl)
         //endRotLeft << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
         endRotLeft << 1, 0, 0, 0, 1, 0, 0, 0, 1;
         Eigen::Vector3d endPosLeft;
-        //endPosLeft << -0.10, 0.3475, 0.7319; 
         endPosLeft << -0.10, 0.3475, 0.7319; 
 
         ctl.lh2Task->set_ef_pose(sva::PTransformd(endRotLeft, endPosLeft) * X_0_mid);
@@ -231,24 +230,11 @@ Prim17Step * Prim17InitPoseStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     if (diffLeft <= 1e-2)
     {    
-        //static bool gripper_changed = false;
-        //if (gripper_changed == false)
-        //{
-            //gripper_changed = true;
-            //// close left gripper
-            //auto gripper = ctl.grippers["l_gripper"].get();
-            //gripper->setTargetQ({-0.7});
-            //// close right gripper        
-            //gripper = ctl.grippers["r_gripper"].get();
-            //gripper->setTargetQ({-0.7});
-        //}
-
         static int wait = 0;
         wait++;
         if (wait == 500) 
         {
             wait = 0;
-            //gripper_changed = false;
             return new Prim17EndStep;
         }
     }

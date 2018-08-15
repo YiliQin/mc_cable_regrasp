@@ -37,6 +37,7 @@ struct Primitive13;
 struct Primitive14;
 struct Primitive15;
 struct Primitive17;
+struct Primitive18;
 
 struct PrimInfo
 {
@@ -91,6 +92,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         Primitive14 * prim14 = nullptr;
         Primitive15 * prim15 = nullptr;
         Primitive17 * prim17 = nullptr;
+        Primitive18 * prim18 = nullptr;
 
         std::queue<PrimInfo> quePrim;
         
