@@ -195,14 +195,7 @@ Prim18Step * Prim18RightBackStep::__update(MCCableRegraspController & ctl)
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
 
-        // close left gripper
-        auto gripper = ctl.grippers["l_gripper"].get();
-        gripper->setTargetQ({-0.7});
-        // close right gripper        
-        gripper = ctl.grippers["r_gripper"].get();
-        gripper->setTargetQ({-0.7});
-
-        // left gripper
+        // right gripper
         Eigen::Matrix3d endRotRight; 
         //endRotRight << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
         endRotRight << 1, 0, 0, 0, 1, 0, 0, 0, 1;
