@@ -31,6 +31,7 @@ struct Primitive3;
 struct Primitive4;
 struct Primitive5;
 struct Primitive6;
+struct Primitive7;
 
 struct PrimInfo
 {
@@ -66,6 +67,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         bool prim6ContinueS1 = false; 
         bool prim6ContinueS2 = false;
         bool prim6ContinueS3 = false;
+        bool prim7Continue = false;
         // True for the initial reset
         bool initial_reset = true;
 
@@ -77,6 +79,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         Primitive4 * prim4 = nullptr;
         Primitive5 * prim5 = nullptr;
         Primitive6 * prim6 = nullptr;
+        Primitive7 * prim7 = nullptr;
 
         std::queue<PrimInfo> quePrim;
         

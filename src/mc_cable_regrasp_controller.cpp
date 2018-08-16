@@ -6,6 +6,7 @@
 #include "mc_cable_regrasp_primitive4.h"
 #include "mc_cable_regrasp_primitive5.h"
 #include "mc_cable_regrasp_primitive6.h"
+#include "mc_cable_regrasp_primitive7.h"
 
 #include <mc_rtc/logging.h>
 #include <mc_rtc/ros.h>
@@ -118,6 +119,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     prim4 = new Primitive4(4, "Primivive 4", *this); 
     prim5 = new Primitive5(5, "Primivive 5", *this); 
     prim6 = new Primitive6(6, "Primivive 6", *this); 
+    prim7 = new Primitive7(7, "Primivive 7", *this); 
 
     //
     #ifdef MC_RTC_HAS_ROS
@@ -379,6 +381,12 @@ void MCCableRegraspController::global_fsm_run()
 
 bool MCCableRegraspController::read_msg(std::string & msg)
 {
+    auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
+    auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+    //
     if(msg.size() == 0)
     {
         return false;
@@ -444,6 +452,11 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         prim6ContinueS3 = true;
         return true;
     }
+    else if (token == "Prim7Continue")
+    {
+        prim7Continue = true;
+        return true;
+    }
     else if(token == "OpenRightGripper")
     {
         auto gripper = grippers["r_gripper"].get();
@@ -490,6 +503,31 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         marker2_pos = lshapes["rail"].world_pos;
         LOG_SUCCESS("Marker_8cm position:");
         LOG_SUCCESS(marker2_pos.translation());
+    }
+    else if (token == "MoveGripper")
+    {
+        double x, y, z;
+        ss >> x >> y >> z;
+        Eigen::Vector3d diff;
+        diff << x, y, z;
+
+        // left gripper
+        sva::PTransformd leftGripper;
+        leftGripper = lh2Task->get_ef_pose() * X_0_mid.inv();
+        Eigen::Vector3d startPosLeft;
+        startPosLeft = leftGripper.translation();
+        Eigen::Vector3d endPosLeft; 
+        endPosLeft = startPosLeft + diff;
+        // right gripper
+        sva::PTransformd rightGripper;
+        rightGripper = rh2Task->get_ef_pose() * X_0_mid.inv();
+        Eigen::Vector3d startPosRight;
+        startPosRight = rightGripper.translation();
+        Eigen::Vector3d endPosRight;
+        endPosRight = startPosRight + diff;
+
+        lh2Task->set_ef_pose(sva::PTransformd(leftGripper.rotation(), endPosLeft) * X_0_mid);
+        rh2Task->set_ef_pose(sva::PTransformd(rightGripper.rotation(), endPosRight) * X_0_mid);
     }
     else
     {

@@ -5,6 +5,7 @@
 #include "mc_cable_regrasp_primitive4.h"
 #include "mc_cable_regrasp_primitive5.h"
 #include "mc_cable_regrasp_primitive6.h"
+#include "mc_cable_regrasp_primitive7.h"
 
 namespace mc_control
 {
@@ -88,6 +89,15 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.primNum = 6;
     primInfo.parNum = 1;
     primInfo.par1 = 0.4;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 2
+    primInfo.name = "Primitive7";
+    primInfo.primNum = 7;
+    primInfo.parNum = 0;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
     //// Test data 1
@@ -242,6 +252,11 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             ctl.prim6->reset();
             ctl.prim6->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
+        case 7:
+            LOG_SUCCESS("Execuating Primitive7.");
+            ctl.prim7->reset();
+            ctl.prim7->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
         default:
             break;
     }
@@ -327,6 +342,19 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
                     return new EndStep;
             }
             break;
+        case 7:
+            ctl.prim7->prim_fsm_run(ctl);
+            if (ctl.prim7->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim7->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+
         default:
             return new EndStep;
             break;
