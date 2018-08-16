@@ -87,7 +87,7 @@ Prim12Step * Prim12OpenGripperStep::__update(MCCableRegraspController &)
 void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    //std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
+    std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
     //
     auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
     auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -105,8 +105,15 @@ void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
     startRotLeft = leftGripper.rotation();
     Eigen::Vector3d leftDiff;
     leftDiff << 0.0, ctl.prim12->get_slideLen(), 0.0;
+    // different trajectory
     Eigen::Vector3d endPosLeft;
-    endPosLeft = startPosLeft + leftDiff;
+    if (ctl.prim12->get_spreadType() == 1)
+        endPosLeft = startPosLeft + leftDiff;
+    else if (ctl.prim12->get_spreadType() == 2)
+        endPosLeft << 0.2, 0.4, startPosLeft[2]; 
+    else
+        endPosLeft = endPosLeft;
+    //
     Eigen::Matrix3d endRotLeft;
     endRotLeft = startRotLeft;
     leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
@@ -227,8 +234,15 @@ void Prim12BackStep::__init(MCCableRegraspController & ctl)
     startRotLeft = leftGripper.rotation();
     Eigen::Vector3d leftDiff;
     leftDiff << 0.0, -ctl.prim12->get_slideLen(), 0.0;
+    // different trajectory
     Eigen::Vector3d endPosLeft;
-    endPosLeft = startPosLeft + leftDiff;
+    if (ctl.prim12->get_spreadType() == 1)
+        endPosLeft = startPosLeft + leftDiff;
+    else if (ctl.prim12->get_spreadType() == 2)
+        endPosLeft << 0.2, 0.2, startPosLeft[2];
+    else
+        endPosLeft = endPosLeft;
+    //
     Eigen::Matrix3d endRotLeft;
     endRotLeft = startRotLeft;
     leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
