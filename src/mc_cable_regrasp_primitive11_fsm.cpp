@@ -96,20 +96,6 @@ void Prim11SpreadStep::__init(MCCableRegraspController & ctl)
     auto X_0_mid = X_lf_rf * X_0_lf;
     //
     ctl.prim11->set_stepByStep(stepByStep_);
-    //// left gripper
-    //sva::PTransformd leftGripper;
-    //leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
-    //Eigen::Vector3d startPosLeft;
-    //startPosLeft = leftGripper.translation();
-    //Eigen::Matrix3d startRotLeft;
-    //startRotLeft = leftGripper.rotation();
-    //Eigen::Vector3d leftDiff;
-    //leftDiff << 0.0, ctl.prim11->get_slideLen()/2, 0.0;
-    //Eigen::Vector3d endPosLeft;
-    //endPosLeft = startPosLeft + leftDiff;
-    //Eigen::Matrix3d endRotLeft;
-    //endRotLeft = startRotLeft;
-    //leftHandLinearTraj = new LinearTrajectory(startPosLeft, endPosLeft, startRotLeft, endRotLeft, nr_points_traj);
 
     // right gripper
     sva::PTransformd rightGripper;
@@ -120,8 +106,16 @@ void Prim11SpreadStep::__init(MCCableRegraspController & ctl)
     startRotRight = rightGripper.rotation();
     Eigen::Vector3d rightDiff;
     rightDiff << 0.0, -ctl.prim11->get_slideLen(), 0.0;
+    // different trajectory
     Eigen::Vector3d endPosRight;
-    endPosRight = startPosRight + rightDiff;
+    if (ctl.prim11->get_spreadType() == 1)
+        endPosRight = startPosRight + rightDiff;
+    else if (ctl.prim11->get_spreadType() == 2)
+        //endPosRight << 0, -0.40, startPosRight[2]; 
+        endPosRight << 0.05, -0.50, startPosRight[2]; 
+    else
+        endPosRight = endPosRight;
+    //
     Eigen::Matrix3d endRotRight;
     endRotRight = startRotRight;
     rightHandLinearTraj = new LinearTrajectory(startPosRight, endPosRight, startRotRight, endRotRight, nr_points_traj);
@@ -150,20 +144,6 @@ Prim11Step * Prim11SpreadStep::__update(MCCableRegraspController & ctl)
         auto X_lf_rf = X_0_rf * (X_0_lf.inv());
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
-
-        //// left gripper
-        //tt = leftHandLinearTraj->pop();
-        //Eigen::Vector3d leftPos;
-        //leftPos = std::get<0>(tt);
-        //Eigen::Vector3d leftVel;
-        //leftVel = std::get<1>(tt);
-        ////ctl.lh2Task->positionTask->refVel(leftVel);
-        //Eigen::Vector3d leftAccel;
-        //leftAccel = std::get<2>(tt);
-        ////ctl.lh2Task->positionTask->refAccel(leftAccel)
-        //Eigen::Matrix3d leftRot;
-        //leftRot = std::get<3>(tt);
-        //ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot, leftPos) * X_0_mid);
 
         // right gripper
         tt = rightHandLinearTraj->pop();
@@ -255,8 +235,14 @@ void Prim11BackStep::__init(MCCableRegraspController & ctl)
     startRotRight = rightGripper.rotation();
     Eigen::Vector3d rightDiff;
     rightDiff << 0.0, ctl.prim11->get_slideLen(), 0.0;
+    // different trajectory
     Eigen::Vector3d endPosRight;
-    endPosRight = startPosRight + rightDiff;
+    if (ctl.prim11->get_spreadType() == 1)
+        endPosRight = startPosRight + rightDiff;
+    else if (ctl.prim11->get_spreadType() == 2)
+        endPosRight << 0.2, -0.2, startPosRight[2]; 
+    else
+        endPosRight = endPosRight;
     Eigen::Matrix3d endRotRight;
     endRotRight = startRotRight;
     rightHandLinearTraj = new LinearTrajectory(startPosRight, endPosRight, startRotRight, endRotRight, nr_points_traj);

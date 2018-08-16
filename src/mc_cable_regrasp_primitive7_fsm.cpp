@@ -100,6 +100,15 @@ Prim7Step * Prim7ReleaseStep::__update(MCCableRegraspController & ctl)
     X_lf_rf.translation() = X_lf_rf.translation() / 2;
     auto X_0_mid = X_lf_rf * X_0_lf;
 
+    // Cheset task.
+    Eigen::Matrix3d rot;
+    rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+    Eigen::Vector3d t;     
+    //t << 0.0320, 0.0, 1.122;
+    //t << -0.0320, 0.0, 1.0;
+    t << -0.05, 0.0, 1.122;
+    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
+
     // left gripper
     sva::PTransformd leftGripper;
     leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
@@ -215,21 +224,28 @@ Prim7Step * Prim7BackStep::__update(MCCableRegraspController & ctl)
         X_lf_rf.translation() = X_lf_rf.translation() / 2;
         auto X_0_mid = X_lf_rf * X_0_lf;
 
+        // Cheset task.
+        Eigen::Matrix3d rot;
+        rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        Eigen::Vector3d t;     
+        t << 0.0320, 0.0, 1.122;
+        //t << -0.0320, 0.0, 1.0;
+        //t << -0.05, 0.0, 1.122;
+        ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
+
         // left gripper
         Eigen::Matrix3d endRotLeft; 
-        //endRotLeft << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
-        endRotLeft << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        endRotLeft << 0.825986, -0.330466, 0.45666, 0.242954, 0.939727, 0.240597, -0.508645, -0.0877827, 0.85649;
         Eigen::Vector3d endPosLeft;
-        endPosLeft << -0.10, 0.3475, 0.7319; 
+        endPosLeft << -0.00615974, 0.378751, 0.846779;
 
         ctl.lh2Task->set_ef_pose(sva::PTransformd(endRotLeft, endPosLeft) * X_0_mid);
 
         // right gripper
         Eigen::Matrix3d endRotRight; 
-        //endRotRight << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
-        endRotRight << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        endRotRight << 0.82598, 0.329603, 0.457295, -0.242991, 0.940186, -0.238757, -0.508637, 0.0860903, 0.856666;
         Eigen::Vector3d endPosRight;
-        endPosRight << -0.10, -0.3475, 0.7319; 
+        endPosRight << -0.00616116, -0.378347, 0.846025; 
 
         ctl.rh2Task->set_ef_pose(sva::PTransformd(endRotRight, endPosRight) * X_0_mid);
 

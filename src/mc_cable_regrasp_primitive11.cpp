@@ -36,7 +36,7 @@ void Primitive11::prim_config(double par1, double par2, MCCableRegraspController
 {
     // Set parameter1.
     slideLen = par1;
-    par2 = par2;
+    spreadType = int(par2);
 
     // create FSM
     step = new Prim11InitStep();
@@ -77,6 +77,11 @@ void Primitive11::prim_fsm_run(MCCableRegraspController & ctl)
 double Primitive11::get_slideLen()
 {
     return slideLen;
+}
+
+int Primitive11::get_spreadType()
+{
+    return spreadType;
 }
 
 }

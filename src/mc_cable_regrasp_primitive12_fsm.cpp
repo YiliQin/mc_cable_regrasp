@@ -87,7 +87,7 @@ Prim12Step * Prim12OpenGripperStep::__update(MCCableRegraspController &)
 void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
+    //std::cout << "Primitive12: Prim12SpreadStep: __init()." << std::endl;
     //
     auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
     auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -110,7 +110,8 @@ void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
     if (ctl.prim12->get_spreadType() == 1)
         endPosLeft = startPosLeft + leftDiff;
     else if (ctl.prim12->get_spreadType() == 2)
-        endPosLeft << 0.2, 0.4, startPosLeft[2]; 
+        //endPosLeft << 0, 0.4, startPosLeft[2]; 
+        endPosLeft << 0.05, 0.5, startPosLeft[2]; 
     else
         endPosLeft = endPosLeft;
     //

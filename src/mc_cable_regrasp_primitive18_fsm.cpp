@@ -198,9 +198,13 @@ Prim18Step * Prim18RightBackStep::__update(MCCableRegraspController & ctl)
         // right gripper
         Eigen::Matrix3d endRotRight; 
         //endRotRight << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
-        endRotRight << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        //endRotRight << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        endRotRight << 0.82598, 0.329603, 0.457295, -0.242991, 0.940186, -0.238757, -0.508637, 0.0860903, 0.856666;
+        //endRotRight << 0.9643, -0.0861, -0.2504, 0.1304, 0.9774, 0.1665, 0.2304, -0.1932, 0.9537;
         Eigen::Vector3d endPosRight;
-        endPosRight << -0.10, -0.3475, 0.7319; 
+        //endPosRight << -0.10, -0.3475, 0.7319; 
+        //endPosRight << 0.10, -0.3475, 0.7319; 
+        endPosRight << -0.00616116, -0.378347, 0.846025; 
 
         ctl.rh2Task->set_ef_pose(sva::PTransformd(endRotRight, endPosRight) * X_0_mid);
 

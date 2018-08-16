@@ -198,9 +198,13 @@ Prim17Step * Prim17LeftBackStep::__update(MCCableRegraspController & ctl)
         // left gripper
         Eigen::Matrix3d endRotLeft; 
         //endRotLeft << 0.9637, 0.0877, -0.2521, -0.1328, 0.9768, -0.1680, 0.2315, 0.1954  ,0.9530;
-        endRotLeft << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        //endRotLeft << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        endRotLeft << 0.825986, -0.330466, 0.45666, 0.242954, 0.939727, 0.240597, -0.508645, -0.0877827, 0.85649;
+
         Eigen::Vector3d endPosLeft;
-        endPosLeft << -0.10, 0.3475, 0.7319; 
+        //endPosLeft << -0.10, 0.3475, 0.7319; 
+        //endPosLeft << 0.10, 0.3475, 0.7319; 
+        endPosLeft << -0.00615974, 0.378751, 0.846779;
 
         ctl.lh2Task->set_ef_pose(sva::PTransformd(endRotLeft, endPosLeft) * X_0_mid);
 

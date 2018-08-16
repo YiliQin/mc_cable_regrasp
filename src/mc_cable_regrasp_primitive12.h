@@ -23,8 +23,9 @@ struct Primitive12 : public BasicPrimitive
     private:
         // FSM pointer.
         Prim12Step * step = nullptr;  
-        // Parameter 1 - slide length along the cable.
+        // parameter 1 - slide length along the cable.
         double slideLen = 0.0;
+        // parameter 2 - spread type
         int spreadType = 1; 
 };
 
