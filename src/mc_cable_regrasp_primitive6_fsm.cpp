@@ -39,7 +39,7 @@ Prim6Step * Prim6InitStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive6: Prim6InitStep: __update()." << std::endl;
 
-    if (ctl.prim6ContinueS1 == true)
+    if ((ctl.prim6ContinueS1 == true) || (ctl.igStop == true))
     {
         ctl.prim6ContinueS1 = false;
         return new Prim6ToInterPosStep;
@@ -131,7 +131,7 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS2 == true))
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && ((ctl.prim6ContinueS2 == true) || (ctl.igStop == true)))
     {
         ctl.prim6ContinueS2 = false;
 
@@ -183,7 +183,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS3 == true))
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && ((ctl.prim6ContinueS3 == true) || (ctl.igStop == true)))
     {
         ctl.prim6ContinueS3 = false;
 

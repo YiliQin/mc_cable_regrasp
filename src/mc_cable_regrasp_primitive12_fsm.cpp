@@ -108,7 +108,8 @@ void Prim12SpreadStep::__init(MCCableRegraspController & ctl)
     // different trajectory
     Eigen::Vector3d endPosLeft;
     if (ctl.prim12->get_spreadType() == 1)
-        endPosLeft = startPosLeft + leftDiff;
+        //endPosLeft = startPosLeft + leftDiff;
+        endPosLeft << 0.2, ctl.prim12->get_slideLen() + startPosLeft[1], startPosLeft[2];
     else if (ctl.prim12->get_spreadType() == 2)
         //endPosLeft << 0, 0.4, startPosLeft[2]; 
         endPosLeft << 0.05, 0.5, startPosLeft[2]; 
@@ -238,7 +239,8 @@ void Prim12BackStep::__init(MCCableRegraspController & ctl)
     // different trajectory
     Eigen::Vector3d endPosLeft;
     if (ctl.prim12->get_spreadType() == 1)
-        endPosLeft = startPosLeft + leftDiff;
+        //endPosLeft = startPosLeft + leftDiff;
+        endPosLeft << 0.2, -ctl.prim12->get_slideLen() + startPosLeft[1], startPosLeft[2];
     else if (ctl.prim12->get_spreadType() == 2)
         endPosLeft << 0.2, 0.2, startPosLeft[2];
     else

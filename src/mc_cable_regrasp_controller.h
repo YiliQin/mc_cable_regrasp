@@ -72,7 +72,8 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         // for interaction with user
         bool prim15Continue = false;
         // for test
-        bool cmdContinue = false;
+        bool cmdContinue = true;
+        bool igStop = false;
         bool prim6ContinueS1 = false; 
         bool prim6ContinueS2 = false;
         bool prim6ContinueS3 = false;
@@ -149,6 +150,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         Eigen::Vector3d markerOffset;
         Eigen::Vector3d gripperOffset;
         Eigen::Vector3d compenOffset;
+        Eigen::Vector3d regraspOffset;
         // Task.
         std::shared_ptr<mc_tasks::EndEffectorTask> lh2Task;
         std::shared_ptr<mc_tasks::EndEffectorTask> rh2Task;

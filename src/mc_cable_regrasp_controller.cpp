@@ -146,6 +146,7 @@ MCCableRegraspController::MCCableRegraspController(std::shared_ptr<mc_rbdyn::Rob
     markerOffset << 0.0, 0.0, -0.17;
     gripperOffset << 0.0, 0.0, 0.20;
     compenOffset << 0.06, 0.0, 0.02;
+    regraspOffset << 0.05, 0.0, 0.0;
 
     //
     #ifdef MC_RTC_HAS_ROS
@@ -214,6 +215,9 @@ const sva::PTransformd & MCCableRegraspController::X_0_marker(const std::string 
 
 void MCCableRegraspController::reset(const ControllerResetData & reset_data)
 {    
+    // for test
+    cmdContinue = true;
+
     // 
     MCController::reset(reset_data);
     qpsolver->setContacts({
@@ -453,6 +457,11 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     else if(token == "Continue")
     {
         cmdContinue = true;
+        return true;
+    }
+    else if(token == "IgStop")
+    {
+        igStop = true;
         return true;
     }
     else if (token == "Prim6ContinueS1")

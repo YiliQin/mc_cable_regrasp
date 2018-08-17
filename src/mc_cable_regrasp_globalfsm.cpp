@@ -125,7 +125,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.name = "Primitive12";
     primInfo.primNum = 12;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
+    primInfo.par1 = 0.45;
     primInfo.par2 = 1;
     ctl.quePrim.push(primInfo);     
 
@@ -142,7 +142,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.primNum = 15;
     primInfo.parNum = 2;
     primInfo.par1 = 0.0;
-    primInfo.par2 = 0.3;
+    primInfo.par2 = 0.4;
     ctl.quePrim.push(primInfo);
 
 // stag 2
@@ -150,7 +150,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.name = "Primitive13";
     primInfo.primNum = 13;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.05;
+    primInfo.par1 = 0.2;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
@@ -158,7 +158,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.name = "Primitive12";
     primInfo.primNum = 12;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
+    primInfo.par1 = 0.45;
     primInfo.par2 = 1;
     ctl.quePrim.push(primInfo);     
 
@@ -175,10 +175,10 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.primNum = 15;
     primInfo.parNum = 2;
     primInfo.par1 = 0.0;
-    primInfo.par2 = 0.3;
+    primInfo.par2 = 0.4;
     ctl.quePrim.push(primInfo);
 
-// stag 3
+// stag 4
     // Test data 9
     primInfo.name = "Primitive13";
     primInfo.primNum = 13;
@@ -186,41 +186,8 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.par1 = 0.2;
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo); 
- 
+
     // Test data 10
-    primInfo.name = "Primitive12";
-    primInfo.primNum = 12;
-    primInfo.parNum = 1;
-    primInfo.par1 = 0.3;
-    primInfo.par2 = 2;
-    ctl.quePrim.push(primInfo);
-
-    // Test data 11
-    primInfo.name = "Primitive18";
-    primInfo.primNum = 18;
-    primInfo.parNum = 0;
-    primInfo.par1 = 0.0;
-    primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo);
-
-    // Test data 12
-    primInfo.name = "Primitive15";
-    primInfo.primNum = 15;
-    primInfo.parNum = 2;
-    primInfo.par1 = 0.0;
-    primInfo.par2 = 0.4;
-    ctl.quePrim.push(primInfo);
-
-// stag 4
-    // Test data 13
-    primInfo.name = "Primitive13";
-    primInfo.primNum = 13;
-    primInfo.parNum = 1;
-    primInfo.par1 = 0.2;
-    primInfo.par2 = 0.0;
-    ctl.quePrim.push(primInfo); 
-
-    // Test data 14
     primInfo.name = "Primitiver6";
     primInfo.primNum = 6;
     primInfo.parNum = 1;
@@ -228,8 +195,8 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.par2 = 0.0;
     ctl.quePrim.push(primInfo);     
 
-    // Test data 15
-    primInfo.name = "Primitiverr7";
+    // Test data 11
+    primInfo.name = "Primitive7";
     primInfo.primNum = 7;
     primInfo.parNum = 0.0;
     primInfo.par1 = 0.0;
@@ -324,15 +291,23 @@ GlobalTestStep * QueueReadStep::__update(MCCableRegraspController & ctl)
 
     if (ctl.quePrim.empty() == false)
     {
-        LOG_SUCCESS("Read out primitive:" << ctl.quePrim.front().name << "," << ctl.quePrim.front().primNum)
-        ctl.primName = ctl.quePrim.front().name;
-        ctl.primType = ctl.quePrim.front().primNum;
-        ctl.primParNum = ctl.quePrim.front().parNum;
-        ctl.primPar1 = ctl.quePrim.front().par1;
-        ctl.primPar2 = ctl.quePrim.front().par2;
-        ctl.quePrim.pop();
-        LOG_SUCCESS("Run pop(), left primitive:" << ctl.quePrim.size());
-        return new ResExeStep;
+        // for test
+        if ((ctl.cmdContinue == true) || (ctl.igStop == true))
+        {
+            ctl.cmdContinue = false;
+            //
+            LOG_SUCCESS("Read out primitive:" << ctl.quePrim.front().name << "," << ctl.quePrim.front().primNum)
+            ctl.primName = ctl.quePrim.front().name;
+            ctl.primType = ctl.quePrim.front().primNum;
+            ctl.primParNum = ctl.quePrim.front().parNum;
+            ctl.primPar1 = ctl.quePrim.front().par1;
+            ctl.primPar2 = ctl.quePrim.front().par2;
+            ctl.quePrim.pop();
+            LOG_SUCCESS("Run pop(), left primitive:" << ctl.quePrim.size());
+            return new ResExeStep;
+        }
+        else
+            return this;
     }
     else 
     {
@@ -483,7 +458,6 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 5:
             ctl.prim5->prim_fsm_run(ctl);
-            // cmdContinue for test
             if (ctl.prim5->get_finish() == true)
             {
                 ctl.primType = 0;

@@ -37,6 +37,11 @@ CREATE_STEP(Prim13InitStep, "Primitive13 Initialization Step",
                 bool stepByStep_ = true;
                 )
 
+CREATE_STEP(Prim13MidPointStep, "Primitive13 To Middle Point Step",
+                bool stepByStep_ = true;
+                int cntRun = 0;
+                )
+
 CREATE_STEP(Prim13PreGraspStep, "Primitive13 Prepare Grasp Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
