@@ -535,41 +535,40 @@ bool MCCableRegraspController::read_msg(std::string & msg)
         LOG_SUCCESS("right translation:");
         LOG_SUCCESS(startPosRight);
     }
-    else if (token == "GetMarkerPos")
+    else if (token == "GetMarkerPos8cm")
     {
-        //// for experiment
-        //marker1Pos = lshapes["wall_0"].world_pos;
-        //marker2Pos = lshapes["rail"].world_pos;
+        // for experiment
+        marker2Pos = lshapes["rail"].world_pos;
 
-        // for simulation
-        marker1Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
-        marker2Pos = lshapes["rail"].world_pos * X_0_mid.inv();
+        //// for simulation
+        //marker2Pos = lshapes["rail"].world_pos * X_0_mid.inv();
 
         // get current marker position
-        Eigen::Vector3d zeroVec;
-        zeroVec << 0.0, 0.0, 0.0;
-        if (marker1Pos.translation() != zeroVec)
-        {
-            curMarkerPos = marker1Pos;
-        }
-        else if (marker2Pos.translation() != zeroVec)
-        {
-            curMarkerPos = marker2Pos;
-        }
-        else
-        {
-            // bug
-            curMarkerPos = curMarkerPos;
-        }
+        curMarkerPos = marker2Pos;
 
-        // print out message
-        LOG_SUCCESS("Marker_5cm position:");
-        LOG_SUCCESS(marker1Pos.translation());
         LOG_SUCCESS("Marker_8cm position:");
         LOG_SUCCESS(marker2Pos.translation());
         LOG_SUCCESS("Current marker position:");
         LOG_SUCCESS(curMarkerPos.translation());
     }
+    else if (token == "GetMarkerPos5cm")
+    {
+        // for experiment
+        marker1Pos = lshapes["wall_0"].world_pos;
+
+        //// for simulation
+        //marker1Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+
+        // get current marker position
+        curMarkerPos = marker1Pos;
+
+        // print out message
+        LOG_SUCCESS("Marker_5cm position:");
+        LOG_SUCCESS(marker1Pos.translation());
+        LOG_SUCCESS("Current marker position:");
+        LOG_SUCCESS(curMarkerPos.translation());
+    }
+
     else if (token == "MoveGripper")
     {
         double x, y, z;

@@ -202,7 +202,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         leftOffset << 0, ctl.prim6->get_distance()/2, 0;  
         Eigen::Vector3d leftPos;
         //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.1;
-        leftPos = leftOffset + ctl.marker1Pos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
+        leftPos = leftOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
@@ -211,7 +211,7 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
         rightOffset << 0, -(ctl.prim6->get_distance()/2), 0;
         Eigen::Vector3d rightPos;
         //rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
-        rightPos = rightOffset + ctl.marker1Pos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
+        rightPos = rightOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         //
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
