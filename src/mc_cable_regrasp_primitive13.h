@@ -18,12 +18,14 @@ struct Primitive13 : public BasicPrimitive
         virtual void prim_config(double par1, double par2, MCCableRegraspController & ctl) override;
         virtual void prim_fsm_run(MCCableRegraspController & ctl) override;
         //
-        double get_distance();
+        double get_dis_x();
+        double get_dis_y();
     private:
         // FSM pointer.
         Prim13Step * step = nullptr;        
         // Parameter 1 - the distance between two grippers.
-        double disBetHands = 0.0;
+        double dis_x = 0.0;
+        double dis_y = 0.0;
 };
 
 }

@@ -35,8 +35,8 @@ void Primitive13::reset()
 void Primitive13::prim_config(double par1, double par2, MCCableRegraspController &)
 {
     // Set parameter1.
-    disBetHands = par1;
-    par2 = par2;
+    dis_x = par1;
+    dis_y = par2;
 
     step = new Prim13InitStep();
 }
@@ -75,9 +75,14 @@ void Primitive13::prim_fsm_run(MCCableRegraspController & ctl)
 
 }
 
-double Primitive13::get_distance()
+double Primitive13::get_dis_x()
 {
-    return disBetHands;
+    return dis_x;
+}
+
+double Primitive13::get_dis_y()
+{
+    return dis_y;
 }
 
 }

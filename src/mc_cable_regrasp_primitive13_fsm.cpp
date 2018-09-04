@@ -77,7 +77,7 @@ Prim13Step * Prim13MidPointStep::__update(MCCableRegraspController & ctl)
     // rotz(90)
     rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
     Eigen::Vector3d rightPos;
-    rightPos << 0.05, -(ctl.prim13->get_distance() + 0.1), leftPos[2];
+    rightPos << 0.05, -(ctl.prim13->get_dis_y() + 0.1), leftPos[2];
     //
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
@@ -125,7 +125,8 @@ Prim13Step * Prim13PreGraspStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d rightPos;
         //rightPos << 0.2, -(ctl.prim13->get_distance()), 1.1;
         //rightPos << leftPos[0], -(ctl.prim13->get_distance()), leftPos[2] + 0.2;
-        rightPos << leftPos[0] + ctl.regraspOffset[0], -(ctl.prim13->get_distance()), leftPos[2] + 0.2;
+        //rightPos << leftPos[0] + ctl.regraspOffset[0], -(ctl.prim13->get_distance()), leftPos[2] + 0.2;
+        rightPos << leftPos[0] + ctl.prim13->get_dis_x(), -(ctl.prim13->get_dis_y()), leftPos[2] + 0.2;
         //
         ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
@@ -154,7 +155,7 @@ Prim13Step * Prim13OpenGripperStep::__update(MCCableRegraspController & ctl)
     //double diffLeft;
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if (diffRight < 1e-2)
+    if (diffRight < 1e-2) 
     {
         static bool opened = false;
         if (opened == false)
@@ -194,30 +195,36 @@ Prim13Step * Prim13GraspStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive13: Prim13GraspStep: __update()." << std::endl;
    
     //
-    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
-    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
-    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
-    X_lf_rf.translation() = X_lf_rf.translation() / 2;
-    auto X_0_mid = X_lf_rf * X_0_lf;
+    if (ctl.prim13Continue == true || ctl.igStop == true)
+    {            
+        ctl.prim13Continue = false;
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
 
-    // left gripper
-    sva::PTransformd leftGripper;
-    leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
-    Eigen::Vector3d leftPos;
-    leftPos = leftGripper.translation();
+        // left gripper
+        sva::PTransformd leftGripper;
+        leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
+        Eigen::Vector3d leftPos;
+        leftPos = leftGripper.translation();
 
-    // Right gripper.
-    Eigen::Matrix3d rightRot;
-    // rotz(90)
-    rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
-    Eigen::Vector3d rightPos;
-    //rightPos << 0.2, -(ctl.prim13->get_distance()), 1.0;
-    //rightPos << leftPos[0], -(ctl.prim13->get_distance()), leftPos[2];
-    rightPos << leftPos[0] + ctl.regraspOffset[0], -(ctl.prim13->get_distance()), leftPos[2] + (-0.03);
-    //
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
-
-    return new Prim13CloseGripperStep;
+        // Right gripper.
+        Eigen::Matrix3d rightRot;
+        // rotz(90)
+        rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+        Eigen::Vector3d rightPos;
+        //rightPos << 0.2, -(ctl.prim13->get_distance()), 1.0;
+        //rightPos << leftPos[0], -(ctl.prim13->get_distance()), leftPos[2];
+        //rightPos << leftPos[0] + ctl.regraspOffset[0], -(ctl.prim13->get_distance()), leftPos[2] + (-0.03);
+        rightPos << leftPos[0] + ctl.prim13->get_dis_x(), -(ctl.prim13->get_dis_y()), leftPos[2] + (-0.03);
+        //
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
+        return new Prim13CloseGripperStep;
+    }
+    else
+        return this;
 }
 
 /////////////////////////////////////////////////////////////

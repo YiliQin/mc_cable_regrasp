@@ -77,7 +77,7 @@ Prim14Step * Prim14MidPointStep::__update(MCCableRegraspController & ctl)
     // rotz(-90)
     leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
     Eigen::Vector3d leftPos;
-    leftPos << 0.05, ctl.prim14->get_distance() + 0.1, rightPos[2];
+    leftPos << 0.05, ctl.prim14->get_dis_y() + 0.1, rightPos[2];
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
 
     return new Prim14PreGraspStep;
@@ -124,7 +124,8 @@ Prim14Step * Prim14PreGraspStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d leftPos;
         //leftPos << 0.3, ctl.prim14->get_distance()/2, 1.1;
         //leftPos << rightPos[0], ctl.prim14->get_distance(), rightPos[2] + 0.2;
-        leftPos << rightPos[0] + ctl.regraspOffset[0], ctl.prim14->get_distance(), rightPos[2] + 0.2;
+        //leftPos << rightPos[0] + ctl.regraspOffset[0], ctl.prim14->get_distance(), rightPos[2] + 0.2;
+        leftPos << rightPos[0] + ctl.prim14->get_dis_x(), ctl.prim14->get_dis_y(), rightPos[2] + 0.2;
         ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
 
         return new Prim14OpenGripperStep;
@@ -209,7 +210,8 @@ Prim14Step * Prim14GraspStep::__update(MCCableRegraspController & ctl)
     Eigen::Vector3d leftPos;
     //leftPos << 0.3, ctl.prim14->get_distance()/2, 1.0;
     //leftPos << rightPos[0], ctl.prim14->get_distance(), rightPos[2];
-    leftPos << rightPos[0] + ctl.regraspOffset[0], ctl.prim14->get_distance(), rightPos[2] + (-0.03);
+    //leftPos << rightPos[0] + ctl.regraspOffset[0], ctl.prim14->get_distance(), rightPos[2] + (-0.03);
+    leftPos << rightPos[0] + ctl.prim14->get_dis_x(), ctl.prim14->get_dis_y(), rightPos[2] + (-0.03);
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
 
     return new Prim14CloseGripperStep;
