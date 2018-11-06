@@ -70,7 +70,8 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         // FLAGS: set before controller usage
         bool FLAG_SIMULATION_VREP = true;
         // for interaction with user
-        bool prim13Continue = false;
+        bool prim13ContinueS1 = false;
+        bool prim13ContinueS2 = false;
         bool prim15Continue = false;
         // for test
         bool cmdContinue = true;

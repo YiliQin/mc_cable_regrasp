@@ -195,9 +195,9 @@ Prim13Step * Prim13GraspStep::__update(MCCableRegraspController & ctl)
     //std::cout << "Primitive13: Prim13GraspStep: __update()." << std::endl;
    
     //
-    if (ctl.prim13Continue == true || ctl.igStop == true)
+    if (ctl.prim13ContinueS1 == true || ctl.igStop == true)
     {            
-        ctl.prim13Continue = false;
+        ctl.prim13ContinueS1 = false;
         auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
         auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
         auto X_lf_rf = X_0_rf * (X_0_lf.inv());
@@ -241,13 +241,12 @@ void Prim13CloseGripperStep::__init(MCCableRegraspController & ctl)
 
 Prim13Step * Prim13CloseGripperStep::__update(MCCableRegraspController & ctl)
 {
-    // For test.
-    //std::cout << "Primitive13: Prim13CloseGripperStep: __update()." << std::endl;
-
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if (diffRight < 1e-2)
+    if ((diffRight < 1e-2) && (ctl.prim13ContinueS2 == true || ctl.igStop == true))
     {
+        ctl.prim13ContinueS2 = false;
+
         static bool closed = false;
         if(closed == false)
         {
