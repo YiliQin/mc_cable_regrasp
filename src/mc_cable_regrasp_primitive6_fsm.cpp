@@ -34,18 +34,12 @@ void Prim6InitStep::__init(MCCableRegraspController & ctl)
     ctl.prim6->set_stepByStep(stepByStep_);
 }
 
-Prim6Step * Prim6InitStep::__update(MCCableRegraspController & ctl)
+Prim6Step * Prim6InitStep::__update(MCCableRegraspController &)
 {
     // For test.
     //std::cout << "Primitive6: Prim6InitStep: __update()." << std::endl;
 
-    if ((ctl.prim6ContinueS1 == true) || (ctl.igStop == true))
-    {
-        ctl.prim6ContinueS1 = false;
-        return new Prim6ToInterPosStep;
-    }
-    else
-        return this;
+    return new Prim6ToInterPosStep;
 }
 
 /////////////////////////////////////////////////////////////
@@ -97,9 +91,100 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
     ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
-    return new Prim6ToPrePosStep;
-    // for 20180731 test
-    //return new Prim6InitPoseStep;
+    return new Prim6HeadDownStep;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Head Down Step
+/////////////////////////////////////////////////////////////
+
+void Prim6HeadDownStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadDownSetp: __init()."<< std::endl;
+
+    // pan
+    ctl.set_joint_pos("HEAD_JOINT0", 0.0);
+    // tilt
+    ctl.set_joint_pos("HEAD_JOINT1", 0.5);
+
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6HeadDownStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadDownStep: __update()." << std::endl;
+
+    static int wait = 0;
+    wait++;
+    if (wait == 500)
+    {
+        wait = 0;
+        return new Prim6GetMarkPosStep;
+    }
+    else
+        return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Get Marker Position Step
+/////////////////////////////////////////////////////////////
+
+void Prim6GetMarkPosStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6GetMarkPosSetp: __init()."<< std::endl;
+
+    LOG_SUCCESS("Please Initial Cable / Get and Check the marker position!");
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6GetMarkPosStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6GetMarkPosStep: __update()." << std::endl;
+
+    if (ctl.prim6ContinueS1 == true)
+    {
+        ctl.prim6ContinueS1 = false;
+        return new Prim6HeadUpStep;
+    }
+    else 
+        return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Head Up Step
+/////////////////////////////////////////////////////////////
+
+void Prim6HeadUpStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadUpSetp: __init()."<< std::endl;
+
+    // pan
+    ctl.set_joint_pos("HEAD_JOINT0", 0.0);
+    // tilt
+    ctl.set_joint_pos("HEAD_JOINT1", 0.0);
+
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6HeadUpStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadUpStep: __update()." << std::endl;
+
+    static int wait;
+    wait++;
+    if (wait == 500)
+    {
+        wait = 0;
+        return new Prim6ToPrePosStep;
+    }
+    else
+        return this;
 }
 
 /////////////////////////////////////////////////////////////
@@ -131,10 +216,8 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && ((ctl.prim6ContinueS2 == true) || (ctl.igStop == true)))
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
-        ctl.prim6ContinueS2 = false;
-
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
@@ -183,9 +266,9 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && ((ctl.prim6ContinueS3 == true) || (ctl.igStop == true)))
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS2 == true))
     {
-        ctl.prim6ContinueS3 = false;
+        ctl.prim6ContinueS2 = false;
 
         // 
         auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());

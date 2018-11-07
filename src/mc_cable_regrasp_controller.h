@@ -75,6 +75,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         bool prim15Continue = false;
         // for test
         bool cmdContinue = true;
+        //bool cmdPrepare = true;
         bool igStop = false;
         bool prim6ContinueS1 = false; 
         bool prim6ContinueS2 = false;

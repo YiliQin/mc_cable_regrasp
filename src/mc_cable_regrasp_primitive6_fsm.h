@@ -42,6 +42,18 @@ CREATE_STEP(Prim6ToInterPosStep, "Primitive6 To Intermediate Posture Step",
                 int cntRun = 0;
                 )
 
+CREATE_STEP(Prim6HeadDownStep, "Primitive6 Head Down Step",
+                bool stepByStep_ = true;
+                )
+
+CREATE_STEP(Prim6GetMarkPosStep, "Primitive6 Get Marker Position",
+                bool stepByStep_ = true;
+                )
+
+CREATE_STEP(Prim6HeadUpStep, "Primitive6 Head Up Step",
+                bool stepByStep_ = true;
+                )
+
 CREATE_STEP(Prim6ToPrePosStep, "Primitive6 To Preparing Installation Position Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
