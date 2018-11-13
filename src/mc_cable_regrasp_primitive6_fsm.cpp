@@ -266,10 +266,8 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
     diffRight = ctl.rh2Task->eval().norm();
-    if ((diffLeft < 1e-2) && (diffRight < 1e-2) && (ctl.prim6ContinueS2 == true))
+    if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
-        ctl.prim6ContinueS2 = false;
-
         // 
         auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
         auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
@@ -323,8 +321,9 @@ Prim6Step * Prim6InitPoseStep::__update(MCCableRegraspController & ctl)
 
     double diff;
     diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    if ((diff < 1e-2) && (ctl.prim6ContinueS2 == true))
     {
+        ctl.prim6ContinueS2 = false;
         //// 
         //auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
         //auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());

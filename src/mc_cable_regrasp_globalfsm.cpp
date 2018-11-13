@@ -115,7 +115,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 
 // stag 1
     // Test data 1
-    primInfo.name = "Primitiver6";
+    primInfo.name = "Primitive6";
     primInfo.primNum = 6;
     primInfo.parNum = 1;
     primInfo.par1 = 0.4;
@@ -125,7 +125,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.name = "Primitive12";
     primInfo.primNum = 12;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.40;
+    primInfo.par1 = 0.43;
     primInfo.par2 = 1;
     ctl.quePrim.push(primInfo);     
 
@@ -158,7 +158,7 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     primInfo.name = "Primitive12";
     primInfo.primNum = 12;
     primInfo.parNum = 1;
-    primInfo.par1 = 0.40;
+    primInfo.par1 = 0.43;
     primInfo.par2 = 1;
     ctl.quePrim.push(primInfo);     
 

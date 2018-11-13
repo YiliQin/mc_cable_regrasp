@@ -553,10 +553,10 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     else if (token == "GetMarkerPos8cm")
     {
         // for experiment
-        //marker2Pos = lshapes["rail"].world_pos;
+        marker2Pos = lshapes["rail"].world_pos;
 
         //// for simulation
-        marker2Pos = lshapes["rail"].world_pos * X_0_mid.inv();
+        //marker2Pos = lshapes["rail"].world_pos * X_0_mid.inv();
 
         // get current marker position
         curMarkerPos = marker2Pos;
@@ -569,10 +569,10 @@ bool MCCableRegraspController::read_msg(std::string & msg)
     else if (token == "GetMarkerPos5cm")
     {
         // for experiment
-        //marker1Pos = lshapes["wall_0"].world_pos;
+        marker1Pos = lshapes["wall_0"].world_pos;
 
         //// for simulation
-        marker1Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+        //marker1Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
 
         // get current marker position
         curMarkerPos = marker1Pos;
