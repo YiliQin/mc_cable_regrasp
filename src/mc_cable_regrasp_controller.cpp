@@ -287,6 +287,84 @@ void MCCableRegraspController::reset(const ControllerResetData & reset_data)
       }
     } // initial reset
 
+  gui()->addElement({"Demo", "IgStop"},
+    mc_rtc::gui::Button("IgStop", [this]() { igStop = true; }));
+  gui()->addElement({"Demo", "Grippers"},
+    mc_rtc::gui::Button("Close left gripper", [this]() { grippers["l_gripper"]->setTargetQ({-0.7}); }),
+    mc_rtc::gui::Button("Close right gripper", [this]() { grippers["r_gripper"]->setTargetQ({-0.7}); }),
+    mc_rtc::gui::Form("Move left gripper",
+                      [this](const mc_rtc::Configuration & data)
+                      {
+                        Eigen::Vector3d xyz = data("x-y-z");
+                        lh2Task->set_ef_pose(lh2Task->get_ef_pose() * sva::PTransformd{xyz});
+                      },
+                      mc_rtc::gui::FormArrayInput<Eigen::Vector3d>("x-y-z", true, Eigen::Vector3d::Zero())),
+    mc_rtc::gui::Form("Move right gripper",
+                      [this](const mc_rtc::Configuration & data)
+                      {
+                        Eigen::Vector3d xyz = data("x-y-z");
+                        rh2Task->set_ef_pose(rh2Task->get_ef_pose() * sva::PTransformd{xyz});
+                      },
+                      mc_rtc::gui::FormArrayInput<Eigen::Vector3d>("x-y-z", true, Eigen::Vector3d::Zero())),
+    mc_rtc::gui::Form("Move both grippers",
+                      [this](const mc_rtc::Configuration & data)
+                      {
+                        Eigen::Vector3d xyz = data("x-y-z");
+                        lh2Task->set_ef_pose(lh2Task->get_ef_pose() * sva::PTransformd{xyz});
+                        rh2Task->set_ef_pose(rh2Task->get_ef_pose() * sva::PTransformd{xyz});
+                      },
+                      mc_rtc::gui::FormArrayInput<Eigen::Vector3d>("x-y-z", true, Eigen::Vector3d::Zero())),
+    mc_rtc::gui::Button("Open left gripper", [this]() { grippers["l_gripper"]->setTargetQ({0.7}); }),
+    mc_rtc::gui::Button("Open right gripper", [this]() { grippers["r_gripper"]->setTargetQ({0.7}); })
+  );
+  gui()->addElement({"Demo", "Markers"},
+    mc_rtc::gui::Label("Current marker", [this]() { return curMarkerName; }),
+    mc_rtc::gui::Button("Set 8 cm marker as current marker", [this]() { curMarkerName = "8cm"; curMarkerPos = marker1Pos; }),
+    mc_rtc::gui::Point3D("8 cm marker", [this]()
+                        {
+                          if(lshapes.count("rail") && lshapes["rail"].initialized)
+                          {
+                            auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
+                            auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
+                            auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+                            X_lf_rf.translation() = X_lf_rf.translation() / 2;
+                            auto X_0_mid = X_lf_rf * X_0_lf;
+                            marker1Pos = lshapes["rail"].world_pos * X_0_mid.inv();
+                            return marker1Pos.translation();
+                          }
+                          else
+                          {
+                            return Eigen::Vector3d::Zero().eval();
+                          }
+                        }),
+    mc_rtc::gui::Point3D("5 cm marker", [this]()
+                        {
+                          if(lshapes.count("wall_0") && lshapes["wall_0"].initialized)
+                          {
+                            auto X_0_lf = robot().surface("LFullSole").X_0_s(robot());
+                            auto X_0_rf = robot().surface("RFullSole").X_0_s(robot());
+                            auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+                            X_lf_rf.translation() = X_lf_rf.translation() / 2;
+                            auto X_0_mid = X_lf_rf * X_0_lf;
+                            marker2Pos = lshapes["wall_0"].world_pos * X_0_mid.inv();
+                            return marker2Pos.translation();
+                          }
+                          else
+                          {
+                            return Eigen::Vector3d::Zero().eval();
+                          }
+                        }),
+    mc_rtc::gui::Button("Set 5 cm marker as current marker", [this]() { curMarkerName = "5cm"; curMarkerPos = marker2Pos; })
+  );
+  gui()->addElement({"Demo", "Primitives"},
+    mc_rtc::gui::Button("Prim6ContinueS1", [this]() { prim6ContinueS1 = true; }),
+    mc_rtc::gui::Button("Prim6ContinueS2", [this]() { prim6ContinueS2 = true; }),
+    mc_rtc::gui::Button("Prim15Continue", [this]() { prim15Continue = true; }),
+    mc_rtc::gui::Button("Prim13ContinueS1", [this]() { prim13ContinueS1 = true; }),
+    mc_rtc::gui::Button("Prim13ContinueS2", [this]() { prim13ContinueS2 = true; })
+  );
+  gui()->addElement({"Demo", "Head"},
+    mc_rtc::gui::ArrayInput("Command", {"Pan", "Tilt"}, [this]() { double p; double t; get_joint_pos("HEAD_JOINT0", p); get_joint_pos("HEAD_JOINT1", t); return std::pair<double, double>(p, t); }, [this](const std::pair<double, double> & p) { set_joint_pos("HEAD_JOINT0", p.first); set_joint_pos("HEAD_JOINT1", p.second); }));
 }
 
 bool MCCableRegraspController::run()
@@ -361,8 +439,8 @@ bool MCCableRegraspController::run()
     }
     else
     {
-    wrenches["LeftHandForceSensor"] = this->robot().forceSensor("LeftHandForceSensor").removeGravity(this->robot());
-    wrenches["RightHandForceSensor"] = this->robot().forceSensor("RightHandForceSensor").removeGravity(this->robot());
+    wrenches["LeftHandForceSensor"] = this->robot().forceSensor("LeftHandForceSensor").wrenchWithoutGravity(this->robot());
+    wrenches["RightHandForceSensor"] = this->robot().forceSensor("RightHandForceSensor").wrenchWithoutGravity(this->robot());
     }
 
     // Put run() here.

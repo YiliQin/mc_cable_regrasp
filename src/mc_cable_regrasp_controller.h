@@ -148,6 +148,7 @@ struct MC_CONTROL_DLLAPI MCCableRegraspController : public MCController
         // marker
         sva::PTransformd marker1Pos;
         sva::PTransformd marker2Pos;
+        std::string curMarkerName;
         sva::PTransformd curMarkerPos;
         // system offset
         Eigen::Vector3d markerOffset;
