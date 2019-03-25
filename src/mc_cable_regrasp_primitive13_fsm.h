@@ -8,68 +8,66 @@
 namespace mc_control
 {
 
-struct Prim6Step
+struct Prim13Step
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     public:
-        Prim6Step(const std::string & name);
-        virtual ~Prim6Step() {};
-        Prim6Step * update(MCCableRegraspController & ctl);
+        Prim13Step(const std::string & name);
+        virtual ~Prim13Step() {};
+        Prim13Step * update(MCCableRegraspController & ctl);
     protected:
         virtual void __init(MCCableRegraspController & ctl) = 0;
-        virtual Prim6Step * __update(MCCableRegraspController & ctl) = 0;
+        virtual Prim13Step * __update(MCCableRegraspController & ctl) = 0;
     public:
         bool first_call = true;
         std::string name;
 };
 
 #define CREATE_STEP(NAME, DESC, MEMBERS)\
-struct NAME : public Prim6Step\
+struct NAME : public Prim13Step\
 {\
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW\
-    NAME() : Prim6Step(DESC) {}\
+    NAME() : Prim13Step(DESC) {}\
     virtual void __init(MCCableRegraspController & ctl) override;\
-    virtual Prim6Step * __update(MCCableRegraspController & ctl) override;\
+    virtual Prim13Step * __update(MCCableRegraspController & ctl) override;\
     MEMBERS\
 };
 
-CREATE_STEP(Prim6InitStep, "Primitive6 Initialization Step",
+CREATE_STEP(Prim13InitStep, "Primitive13 Initialization Step",
                 bool stepByStep_ = true;
                 )
 
-CREATE_STEP(Prim6ToInterPosStep, "Primitive6 To Intermediate Posture Step",
-                bool stepByStep_ = true;
-                int cntRun = 0;
-                )
-
-CREATE_STEP(Prim6HeadDownStep, "Primitive6 Head Down Step",
-                bool stepByStep_ = true;
-                )
-
-CREATE_STEP(Prim6GetMarkPosStep, "Primitive6 Get Marker Position",
-                bool stepByStep_ = true;
-                )
-
-CREATE_STEP(Prim6HeadUpStep, "Primitive6 Head Up Step",
-                bool stepByStep_ = true;
-                )
-
-CREATE_STEP(Prim6ToPrePosStep, "Primitive6 To Preparing Installation Position Step",
+CREATE_STEP(Prim13MidPointStep, "Primitive13 To Middle Point Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim6InsStep, "Primitive6 Installation Step",
+CREATE_STEP(Prim13PreGraspStep, "Primitive13 Prepare Grasp Step",
                 bool stepByStep_ = true;
                 int cntRun = 0;
                 )
 
-CREATE_STEP(Prim6InitPoseStep, "Primitive6 Initial Pose Step",
+CREATE_STEP(Prim13OpenGripperStep, "Primitive13 Open Gripper Step",
+                bool stepByStep_ = true;
+                int cntRun = 0;
+                )
+
+CREATE_STEP(Prim13GraspStep, "Primitive13 Grasp Step",
+                bool stepByStep_ = true;
+                int cntRun = 0;
+                )
+
+CREATE_STEP(Prim13CloseGripperStep, "Primitive13 Close Gripper Step",
+                bool stepByStep_ = true;
+                int cntRun = 0;
+                )
+
+CREATE_STEP(Prim13InitPoseStep, "Primitive13 Initial Pose Step",
                 bool stepByStep_ = true;
                 int cnt = 0;
                 )
 
-CREATE_STEP(Prim6EndStep, "Primitive6 End Step",
+CREATE_STEP(Prim13EndStep, "Primitive13 End Step",
                 )
 
 #undef CREATE_STEP

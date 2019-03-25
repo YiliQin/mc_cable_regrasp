@@ -14,6 +14,22 @@ set(controller_SRC
     mc_cable_regrasp_primitive5_fsm.cpp
     mc_cable_regrasp_primitive6.cpp
     mc_cable_regrasp_primitive6_fsm.cpp
+    mc_cable_regrasp_primitive7.cpp
+    mc_cable_regrasp_primitive7_fsm.cpp
+    mc_cable_regrasp_primitive11.cpp
+    mc_cable_regrasp_primitive11_fsm.cpp
+    mc_cable_regrasp_primitive12.cpp
+    mc_cable_regrasp_primitive12_fsm.cpp
+    mc_cable_regrasp_primitive13.cpp
+    mc_cable_regrasp_primitive13_fsm.cpp
+    mc_cable_regrasp_primitive14.cpp
+    mc_cable_regrasp_primitive14_fsm.cpp
+    mc_cable_regrasp_primitive15.cpp
+    mc_cable_regrasp_primitive15_fsm.cpp
+    mc_cable_regrasp_primitive17.cpp
+    mc_cable_regrasp_primitive17_fsm.cpp
+    mc_cable_regrasp_primitive18.cpp
+    mc_cable_regrasp_primitive18_fsm.cpp
 
     mc_cable_regrasp_linear_trajectory.cpp
 )
@@ -34,6 +50,22 @@ set(controller_HDR
     mc_cable_regrasp_primitive5_fsm.h
     mc_cable_regrasp_primitive6.h
     mc_cable_regrasp_primitive6_fsm.h
+    mc_cable_regrasp_primitive7.h
+    mc_cable_regrasp_primitive7_fsm.h
+    mc_cable_regrasp_primitive11.h
+    mc_cable_regrasp_primitive11_fsm.h
+    mc_cable_regrasp_primitive12.h
+    mc_cable_regrasp_primitive12_fsm.h
+    mc_cable_regrasp_primitive13.h
+    mc_cable_regrasp_primitive13_fsm.h
+    mc_cable_regrasp_primitive14.h
+    mc_cable_regrasp_primitive14_fsm.h
+    mc_cable_regrasp_primitive15.h
+    mc_cable_regrasp_primitive15_fsm.h
+    mc_cable_regrasp_primitive17.h
+    mc_cable_regrasp_primitive17_fsm.h
+    mc_cable_regrasp_primitive18.h
+    mc_cable_regrasp_primitive18_fsm.h
 
     mc_cable_regrasp_linear_trajectory.h
 )

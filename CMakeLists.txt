@@ -17,7 +17,10 @@ endif()
 
 set(PKG_CONFIG_ADDITIONAL_VARIABLES "${PKG_CONFIG_ADDITIONAL_VARIABLES} libdir")
 add_required_dependency(mc_rtc)
+add_required_dependency(whycon_lshape)
 
 add_subdirectory(src)
+install(FILES etc/CableRegrasp.conf DESTINATION ${MC_RTC_LIBDIR}/mc_controller/etc)
+
 setup_project_finalize()
 

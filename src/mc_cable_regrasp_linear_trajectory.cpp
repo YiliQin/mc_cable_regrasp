@@ -19,8 +19,10 @@ LinearTrajectory::~LinearTrajectory()
 
 void LinearTrajectory::gen_traj()
 {
-    double diffy;
+    double diffx, diffy, diffz;
+    diffx = (endPos[0] - startPos[0])/(double)nr_points;
     diffy = (endPos[1] - startPos[1])/(double)nr_points;
+    diffz = (endPos[2] - startPos[2])/(double)nr_points;
     // position of y direction
     Eigen::Vector3d pos = startPos;
     Eigen::Vector3d vel = Eigen::Vector3d::Zero();
@@ -29,9 +31,9 @@ void LinearTrajectory::gen_traj()
     for (std::size_t i = 0; i < nr_points; i++)
     {
         // positon
-        pos[0] = pos[0];
+        pos[0] = pos[0] + diffx;
         pos[1] = pos[1] + diffy;  
-        pos[2] = pos[2];
+        pos[2] = pos[2] + diffz;
         // velocity
         vel[0] = 0.0;
         vel[1] = 0.05;

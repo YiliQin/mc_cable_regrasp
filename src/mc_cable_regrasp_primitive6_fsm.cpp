@@ -59,12 +59,21 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive5: Prim6HangStep: __update()." << std::endl;
 
+    // 
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
     // Cheset task.
     Eigen::Matrix3d rot;
     rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
     Eigen::Vector3d t;     
-    t << 0.0320, 0.0, 1.122;
-    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t));
+    //t << 0.0320, 0.0, 1.122;
+    //t << -0.0320, 0.0, 1.0;
+    t << -0.05, 0.0, 1.122;
+    ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
 
     // Left gripper.
     Eigen::Matrix3d leftRot;
@@ -79,10 +88,103 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
     Eigen::Vector3d rightPos;
     rightPos << 0.20, -(ctl.prim6->get_distance()/2), 1.0;
     //
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
-    return new Prim6ToPrePosStep;
+    return new Prim6HeadDownStep;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Head Down Step
+/////////////////////////////////////////////////////////////
+
+void Prim6HeadDownStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadDownSetp: __init()."<< std::endl;
+
+    // pan
+    ctl.set_joint_pos("HEAD_JOINT0", 0.0);
+    // tilt
+    ctl.set_joint_pos("HEAD_JOINT1", 0.5);
+
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6HeadDownStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadDownStep: __update()." << std::endl;
+
+    static int wait = 0;
+    wait++;
+    if (wait == 500)
+    {
+        wait = 0;
+        return new Prim6GetMarkPosStep;
+    }
+    else
+        return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Get Marker Position Step
+/////////////////////////////////////////////////////////////
+
+void Prim6GetMarkPosStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6GetMarkPosSetp: __init()."<< std::endl;
+
+    LOG_SUCCESS("Please Initial Cable / Get and Check the marker position!");
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6GetMarkPosStep::__update(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6GetMarkPosStep: __update()." << std::endl;
+
+    if (ctl.prim6ContinueS1 == true)
+    {
+        ctl.prim6ContinueS1 = false;
+        return new Prim6HeadUpStep;
+    }
+    else 
+        return this;
+}
+
+/////////////////////////////////////////////////////////////
+//  Primitive6 Head Up Step
+/////////////////////////////////////////////////////////////
+
+void Prim6HeadUpStep::__init(MCCableRegraspController & ctl)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadUpSetp: __init()."<< std::endl;
+
+    // pan
+    ctl.set_joint_pos("HEAD_JOINT0", 0.0);
+    // tilt
+    ctl.set_joint_pos("HEAD_JOINT1", 0.0);
+
+    ctl.prim6->set_stepByStep(stepByStep_);
+}
+
+Prim6Step * Prim6HeadUpStep::__update(MCCableRegraspController &)
+{
+    // For test.
+    //std::cout << "Primitive6: Prim6HeadUpStep: __update()." << std::endl;
+
+    static int wait;
+    wait++;
+    if (wait == 500)
+    {
+        wait = 0;
+        return new Prim6ToPrePosStep;
+    }
+    else
+        return this;
 }
 
 /////////////////////////////////////////////////////////////
@@ -92,7 +194,7 @@ Prim6Step * Prim6ToInterPosStep::__update(MCCableRegraspController & ctl)
 void Prim6ToPrePosStep::__init(MCCableRegraspController & ctl)
 {
     // For test.
-    std::cout << "Primitive6: Prim6OpenGripperStep: __init()." << std::endl;
+    //std::cout << "Primitive6: Prim6OpenGripperStep: __init()." << std::endl;
 
     ctl.prim6->set_stepByStep(stepByStep_);
 }
@@ -102,6 +204,14 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive6: Prim6ToPrePoseStep: __update()." << std::endl;
 
+    // 
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+
+    //
     double diffLeft;
     diffLeft = ctl.lh2Task->eval().norm();
     double diffRight;
@@ -112,19 +222,25 @@ Prim6Step * Prim6ToPrePosStep::__update(MCCableRegraspController & ctl)
         Eigen::Matrix3d leftRot;
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+        Eigen::Vector3d leftOffset;
+        leftOffset << 0, ctl.prim6->get_distance()/2, 0.10;  
         Eigen::Vector3d leftPos;
-        leftPos << 0.30, ctl.prim6->get_distance()/2, 1.2;
+        //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.2;
+        leftPos = leftOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+        Eigen::Vector3d rightOffset;
+        rightOffset << 0, -(ctl.prim6->get_distance()/2), 0.10;  
         Eigen::Vector3d rightPos;
-        rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.2;
+        rightPos = rightOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
         return new Prim6InsStep;
+        //return new Prim6InitPoseStep;
     }
     return this;
 }
@@ -152,21 +268,34 @@ Prim6Step * Prim6InsStep::__update(MCCableRegraspController & ctl)
     diffRight = ctl.rh2Task->eval().norm();
     if ((diffLeft < 1e-2) && (diffRight < 1e-2))
     {
+        // 
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+
         // Left gripper.
         Eigen::Matrix3d leftRot;
         // rotz(-90)
         leftRot << 0, 1, 0, -1, 0, 0, 0, 0, 1;
+        Eigen::Vector3d leftOffset;
+        leftOffset << 0, ctl.prim6->get_distance()/2, 0;  
         Eigen::Vector3d leftPos;
-        leftPos << 0.30, ctl.prim6->get_distance()/2, 1.1;
+        //leftPos << 0.30, ctl.prim6->get_distance()/2, 1.1;
+        leftPos = leftOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         // Right gripper.
         Eigen::Matrix3d rightRot;
         // rotz(90)
         rightRot << 0, -1, 0, 1, 0, 0, 0, 0, 1;
+        Eigen::Vector3d rightOffset;
+        rightOffset << 0, -(ctl.prim6->get_distance()/2), 0;
         Eigen::Vector3d rightPos;
-        rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
+        //rightPos << 0.30, -(ctl.prim6->get_distance()/2), 1.1;
+        rightPos = rightOffset + ctl.curMarkerPos.translation() + ctl.gripperOffset + ctl.markerOffset + ctl.compenOffset;
         //
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos));
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(leftRot.inverse(), leftPos) * X_0_mid);
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot.inverse(), rightPos) * X_0_mid);
 
         return new Prim6InitPoseStep;
     }
@@ -192,8 +321,23 @@ Prim6Step * Prim6InitPoseStep::__update(MCCableRegraspController & ctl)
 
     double diff;
     diff = ctl.rh2Task->eval().norm();
-    if (diff < 1e-2)
+    if ((diff < 1e-2) && (ctl.prim6ContinueS2 == true))
     {
+        ctl.prim6ContinueS2 = false;
+        //// 
+        //auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        //auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        //auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        //X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        //auto X_0_mid = X_lf_rf * X_0_lf;
+
+        //// Cheset task.
+        //Eigen::Matrix3d rot;
+        //rot << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+        //Eigen::Vector3d t;     
+        //t << 0.0320, 0.0, 1.122;
+        //ctl.chestTask->set_ef_pose(sva::PTransformd(rot.inverse(), t) * X_0_mid);
+
         return new Prim6EndStep;
     }
     return this;

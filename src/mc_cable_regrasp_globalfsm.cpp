@@ -5,6 +5,14 @@
 #include "mc_cable_regrasp_primitive4.h"
 #include "mc_cable_regrasp_primitive5.h"
 #include "mc_cable_regrasp_primitive6.h"
+#include "mc_cable_regrasp_primitive7.h"
+#include "mc_cable_regrasp_primitive11.h"
+#include "mc_cable_regrasp_primitive12.h"
+#include "mc_cable_regrasp_primitive13.h"
+#include "mc_cable_regrasp_primitive14.h"
+#include "mc_cable_regrasp_primitive15.h"
+#include "mc_cable_regrasp_primitive17.h"
+#include "mc_cable_regrasp_primitive18.h"
 
 namespace mc_control
 {
@@ -83,12 +91,12 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
 
     PrimInfo primInfo;
 
-    // Test data 1
-    primInfo.name = "Primitive6";
-    primInfo.primNum = 6;
-    primInfo.parNum = 1;
-    primInfo.par1 = 0.6;
-    ctl.quePrim.push(primInfo);     
+    //// Test data 1
+    //primInfo.name = "Primitive6";
+    //primInfo.primNum = 6;
+    //primInfo.parNum = 1;
+    //primInfo.par1 = 0.4;
+    //ctl.quePrim.push(primInfo);     
 
     //// Test data 2
     //primInfo.name = "Primitive1";
@@ -139,11 +147,109 @@ GlobalTestStep * PlannerRunStep::__update(MCCableRegraspController & ctl)
     //ctl.quePrim.push(primInfo);     
 
     //// Test data 1
+    //primInfo.name = "Primitive15";
+    //primInfo.primNum = 15;
+    //primInfo.parNum = 1;
+    //primInfo.par1 = 0.6;
+    //primInfo.par2 = 0.0;
+    //ctl.quePrim.push(primInfo);
+
+    //// Test data 2
     //primInfo.name = "Primitive5";
     //primInfo.primNum = 5;
     //primInfo.parNum = 1;
-    //primInfo.par1 = 0.6;
+    //primInfo.par1 = 0.4;
     //ctl.quePrim.push(primInfo);     
+
+// stag 1
+    // Test data 1
+    primInfo.name = "Primitive6";
+    primInfo.primNum = 6;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 2
+    primInfo.name = "Primitive12";
+    primInfo.primNum = 12;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.43;
+    primInfo.par2 = 1;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 3
+    primInfo.name = "Primitive18";
+    primInfo.primNum = 18;
+    primInfo.parNum = 0;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);
+
+    // Test data 4
+    primInfo.name = "Primitive15";
+    primInfo.primNum = 15;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.4;
+    ctl.quePrim.push(primInfo);
+
+// stag 2
+    // Test data 5
+    primInfo.name = "Primitive13";
+    primInfo.primNum = 13;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.13;
+    primInfo.par2 = 0.2;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 6
+    primInfo.name = "Primitive12";
+    primInfo.primNum = 12;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.43;
+    primInfo.par2 = 1;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 7
+    primInfo.name = "Primitive18";
+    primInfo.primNum = 18;
+    primInfo.parNum = 0;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);
+
+    // Test data 8
+    primInfo.name = "Primitive15";
+    primInfo.primNum = 15;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.4;
+    ctl.quePrim.push(primInfo);
+
+// stag 4
+    // Test data 9
+    primInfo.name = "Primitive13";
+    primInfo.primNum = 13;
+    primInfo.parNum = 2;
+    primInfo.par1 = 0.07;
+    primInfo.par2 = 0.2;
+    ctl.quePrim.push(primInfo); 
+
+    // Test data 10
+    primInfo.name = "Primitiver6";
+    primInfo.primNum = 6;
+    primInfo.parNum = 1;
+    primInfo.par1 = 0.4;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
+
+    // Test data 11
+    primInfo.name = "Primitive7";
+    primInfo.primNum = 7;
+    primInfo.parNum = 0.0;
+    primInfo.par1 = 0.0;
+    primInfo.par2 = 0.0;
+    ctl.quePrim.push(primInfo);     
 
     //// Test data 2
     //primInfo.name = "Primitive1";
@@ -233,15 +339,23 @@ GlobalTestStep * QueueReadStep::__update(MCCableRegraspController & ctl)
 
     if (ctl.quePrim.empty() == false)
     {
-        LOG_SUCCESS("Read out primitive:" << ctl.quePrim.front().name << "," << ctl.quePrim.front().primNum)
-        ctl.primName = ctl.quePrim.front().name;
-        ctl.primType = ctl.quePrim.front().primNum;
-        ctl.primParNum = ctl.quePrim.front().parNum;
-        ctl.primPar1 = ctl.quePrim.front().par1;
-        ctl.primPar2 = ctl.quePrim.front().par2;
-        ctl.quePrim.pop();
-        LOG_SUCCESS("Run pop(), left primitive:" << ctl.quePrim.size());
-        return new ResExeStep;
+        // for test
+        if ((ctl.cmdContinue == true) || (ctl.igStop == true))
+        {
+            ctl.cmdContinue = false;
+            //
+            LOG_SUCCESS("Read out primitive:" << ctl.quePrim.front().name << "," << ctl.quePrim.front().primNum)
+            ctl.primName = ctl.quePrim.front().name;
+            ctl.primType = ctl.quePrim.front().primNum;
+            ctl.primParNum = ctl.quePrim.front().parNum;
+            ctl.primPar1 = ctl.quePrim.front().par1;
+            ctl.primPar2 = ctl.quePrim.front().par2;
+            ctl.quePrim.pop();
+            LOG_SUCCESS("Run pop(), left primitive:" << ctl.quePrim.size());
+            return new ResExeStep;
+        }
+        else
+            return this;
     }
     else 
     {
@@ -289,6 +403,46 @@ void ResExeStep::__init(MCCableRegraspController & ctl)
             LOG_SUCCESS("Execuating Primitive6.");
             ctl.prim6->reset();
             ctl.prim6->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 7:
+            LOG_SUCCESS("Execuating Primitive7.");
+            ctl.prim7->reset();
+            ctl.prim7->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 11:
+            LOG_SUCCESS("Execuating Primitive11.");
+            ctl.prim11->reset();
+            ctl.prim11->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 12:
+            LOG_SUCCESS("Execuating Primitive12.");
+            ctl.prim12->reset();
+            ctl.prim12->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 13:
+            LOG_SUCCESS("Execuating Primitive13.");
+            ctl.prim13->reset();
+            ctl.prim13->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 14:
+            LOG_SUCCESS("Execuating Primitive14.");
+            ctl.prim14->reset();
+            ctl.prim14->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 15:
+            LOG_SUCCESS("Execuating Primitive15.");
+            ctl.prim15->reset();
+            ctl.prim15->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 17:
+            LOG_SUCCESS("Execuating Primitive17.");
+            ctl.prim17->reset();
+            ctl.prim17->prim_config(ctl.primPar1, ctl.primPar2, ctl);
+            break;
+        case 18:
+            LOG_SUCCESS("Execuating Primitive18.");
+            ctl.prim18->reset();
+            ctl.prim18->prim_config(ctl.primPar1, ctl.primPar2, ctl);
             break;
         default:
             break;
@@ -352,8 +506,7 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             break;
         case 5:
             ctl.prim5->prim_fsm_run(ctl);
-            // cmdContinue for test
-            if ((ctl.prim5->get_finish() == true) && (ctl.cmdContinue == true))
+            if (ctl.prim5->get_finish() == true)
             {
                 ctl.primType = 0;
                 ctl.prim5->idle();
@@ -369,6 +522,102 @@ GlobalTestStep * ResExeStep::__update(MCCableRegraspController & ctl)
             {
                 ctl.primType = 0;
                 ctl.prim6->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 7:
+            ctl.prim7->prim_fsm_run(ctl);
+            if (ctl.prim7->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim7->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 11:
+            ctl.prim11->prim_fsm_run(ctl);
+            if (ctl.prim11->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim11->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 12:
+            ctl.prim12->prim_fsm_run(ctl);
+            if (ctl.prim12->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim12->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 13:
+            ctl.prim13->prim_fsm_run(ctl);
+            if (ctl.prim13->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim13->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 14:
+            ctl.prim14->prim_fsm_run(ctl);
+            if (ctl.prim14->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim14->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 15:
+            ctl.prim15->prim_fsm_run(ctl);
+            if (ctl.prim15->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim15->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 17:
+            ctl.prim17->prim_fsm_run(ctl);
+            if (ctl.prim17->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim17->idle();
+                if (ctl.quePrim.empty() == false)
+                    return new QueueReadStep;
+                else
+                    return new EndStep;
+            }
+            break;
+        case 18:
+            ctl.prim18->prim_fsm_run(ctl);
+            if (ctl.prim18->get_finish() == true)
+            {
+                ctl.primType = 0;
+                ctl.prim18->idle();
                 if (ctl.quePrim.empty() == false)
                     return new QueueReadStep;
                 else
