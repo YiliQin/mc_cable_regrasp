@@ -95,9 +95,16 @@ Prim4Step * Prim4RightHandFlipStep::__update(MCCableRegraspController & ctl)
 {
     // For test.
     //std::cout << "Primitive4: Prim4RightHandFlipStep: __update()." << std::endl;
- 
+
+    // 
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
+    //
     sva::PTransformd rightGripper;
-    rightGripper = ctl.rh2Task->get_ef_pose();
+    rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
     Eigen::Matrix3d rightRot;
     rightRot = rightGripper.rotation();
     Eigen::Vector3d rightTrans;
@@ -109,7 +116,7 @@ Prim4Step * Prim4RightHandFlipStep::__update(MCCableRegraspController & ctl)
     Eigen::Matrix3d t;
     // rotz(90)*rotx(-90)*rotz(180)
     t << 0, 1, 0, 0, 0, -1, -1, 0, 0;
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(t.inverse(), exPos));
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(t.inverse(), exPos) * X_0_mid);
 
     return new Prim4ToCenterStep;
 }
@@ -135,8 +142,15 @@ Prim4Step * Prim4ToCenterStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff <= 1e-2)
     { 
+        //
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+        //
         sva::PTransformd rightGripper;
-        rightGripper = ctl.rh2Task->get_ef_pose();
+        rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
         Eigen::Matrix3d rightRot;
         rightRot = rightGripper.rotation();
         Eigen::Vector3d rightTrans;
@@ -145,7 +159,7 @@ Prim4Step * Prim4ToCenterStep::__update(MCCableRegraspController & ctl)
         Eigen::Vector3d exPos;
         exPos << 0.25, -0.19, 1.0;
         // Rotation
-        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, exPos));
+        ctl.rh2Task->set_ef_pose(sva::PTransformd(rightRot, exPos) * X_0_mid);
         return new Prim4RegraspStep;
     }
     return this;
@@ -172,8 +186,15 @@ Prim4Step * Prim4RegraspStep::__update(MCCableRegraspController & ctl)
     diff = ctl.rh2Task->eval().norm();
     if (diff <= 1e-2)
     { 
+        //
+        auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+        auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+        auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+        X_lf_rf.translation() = X_lf_rf.translation() / 2;
+        auto X_0_mid = X_lf_rf * X_0_lf;
+        //
         sva::PTransformd leftGripper;
-        leftGripper = ctl.lh2Task->get_ef_pose();
+        leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
         Eigen::Matrix3d leftRot;
         leftRot = leftGripper.rotation();
         Eigen::Vector3d leftTrans;
@@ -185,7 +206,7 @@ Prim4Step * Prim4RegraspStep::__update(MCCableRegraspController & ctl)
         Eigen::Matrix3d t;
         // rotz(-90)*roty(-90)
         t << 0, 1, 0, 0, 0, 1, 1, 0, 0;
-        ctl.lh2Task->set_ef_pose(sva::PTransformd(t.inverse(), exPos));
+        ctl.lh2Task->set_ef_pose(sva::PTransformd(t.inverse(), exPos) * X_0_mid);
 
         return new Prim4LeftHandLockStep;
     }
@@ -255,10 +276,16 @@ Prim4Step * Prim4BothFlipStep::__update(MCCableRegraspController & ctl)
     // For test.
     //std::cout << "Primitive4: Prim4BothFlipStep: __update()." << std::endl;
 
+    //
+    auto X_0_lf = ctl.robot().surface("LFullSole").X_0_s(ctl.robot());
+    auto X_0_rf = ctl.robot().surface("RFullSole").X_0_s(ctl.robot());
+    auto X_lf_rf = X_0_rf * (X_0_lf.inv());
+    X_lf_rf.translation() = X_lf_rf.translation() / 2;
+    auto X_0_mid = X_lf_rf * X_0_lf;
  
     // Left hand.
     sva::PTransformd leftGripper;
-    leftGripper = ctl.lh2Task->get_ef_pose();
+    leftGripper = ctl.lh2Task->get_ef_pose() * X_0_mid.inv();
     Eigen::Matrix3d leftRot;
     leftRot = leftGripper.rotation();
     Eigen::Vector3d leftTrans;
@@ -274,7 +301,7 @@ Prim4Step * Prim4BothFlipStep::__update(MCCableRegraspController & ctl)
 
     // Right hand.
     sva::PTransformd rightGripper;
-    rightGripper = ctl.rh2Task->get_ef_pose();
+    rightGripper = ctl.rh2Task->get_ef_pose() * X_0_mid.inv();
     Eigen::Matrix3d rightRot;
     rightRot = rightGripper.rotation();
     Eigen::Vector3d rightTrans;
@@ -289,8 +316,8 @@ Prim4Step * Prim4BothFlipStep::__update(MCCableRegraspController & ctl)
     tRight << 0, -1, 0, 1, 0, 0, 0, 0, 1;
 
     // Both move.
-    ctl.lh2Task->set_ef_pose(sva::PTransformd(tLeft.inverse(), exPosLeft));
-    ctl.rh2Task->set_ef_pose(sva::PTransformd(tRight.inverse(), exPosRight));
+    ctl.lh2Task->set_ef_pose(sva::PTransformd(tLeft.inverse(), exPosLeft) * X_0_mid);
+    ctl.rh2Task->set_ef_pose(sva::PTransformd(tRight.inverse(), exPosRight) *  X_0_mid);
     
     return new Prim4InitPoseStep;
 }
